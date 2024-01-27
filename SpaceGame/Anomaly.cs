@@ -65,5 +65,14 @@ namespace SpaceGame
                 weight = value;
             }
         }
+
+        Anomaly(ulong _maxage, string _description, int _damage, List<Resource> _anomalyresources, int _weight) 
+        {
+            maxage = _maxage;
+            Description = _description;
+            Damage = _damage;
+            anomalyResources = _anomalyresources;
+            Weight = _weight;
+        }
     }
 }

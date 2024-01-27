@@ -55,23 +55,9 @@ namespace SpaceGame
             }
         }
 
-        private Planet planet;
+        private List<Planet> planetlist = new List<Planet>(); // This list contains ALL planets!
 
-        public Planet Planet
-        {
-            get 
-            {
-                return planet;
-            }
-            set 
-            {
-                planet = value;
-            }
-        }
-
-        private Hashtable planetlist = new Hashtable();
-
-        public Hashtable PlanetList
+        public List<Planet> PlanetList
         {
             get
             {
@@ -83,9 +69,9 @@ namespace SpaceGame
             }
         }
 
-        private Hashtable systemplanets = new Hashtable();
+        private List<Planet> systemplanets = new List<Planet>(); // this list simply contains the planets orbiting the star, there is a range of 1 -> 6.
 
-        public Hashtable SystemPlanets 
+        public List<Planet> SystemPlanets 
         {
             get 
             {
@@ -98,17 +84,19 @@ namespace SpaceGame
         }
 
         // THIS IS IMPORTANT. This constructor will generate a number of planets. Each planets constructors must generate the planets unique values.
-        Star() 
+        Star(List<Planet> _planetlist) 
         {
-            int range = planetlist.Count - 1;
+            int range = _planetlist.Count - 1;
             int totalPlanets = random.Next(1, 6);
-            int planetPointer = random.Next(0, range);
+            int planetPointer;
             int iteration = 0;
 
             while (iteration < totalPlanets)
             {
                 planetPointer = random.Next(0, range);
-
+                Planet planet = _planetlist[planetPointer];
+                systemplanets.Add(planet);
+                iteration--;
             }
         }
     }

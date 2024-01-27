@@ -234,6 +234,17 @@ namespace SpaceGame
 
         #endregion
 
+        #region Anomalies
+
+        Anomaly anomaly_DysonSphere = new Anomaly
+        (
+            150000000000, // maximum age that anomaly can appear for.
+            "The homestar i have observed has been gaining and loosing brightness randomly whilst i was observing it. Approaching it i have realized the cause of " +
+            "the blinking is a Dyson sphere"
+        );
+
+        #endregion
+
         private void damageEvent(int _damage) 
         {
             Player.Health -= _damage;
