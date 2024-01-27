@@ -10,7 +10,7 @@
         Loaded="Window_Loaded">
     <Grid>
         <Image x:Name="imageExploration" Source="{Binding ImageSource}" Margin="20,21,1020,288"/>
-        <Button x:Name="buttonTravel" Content="Travel" HorizontalAlignment="Left" Margin="1322,29,0,0" VerticalAlignment="Top" Height="64" Width="186" FontSize="36"/>
+        <Button x:Name="buttonTravel" Content="Travel" HorizontalAlignment="Left" Margin="1322,29,0,0" VerticalAlignment="Top" Height="64" Width="186" FontSize="36" Click="buttonTravel_Click"/>
         <Image x:Name="imageShip" Source="{Binding ImageSource}" Margin="915,20,621,463"/>
         <Image x:Name="imageShipShield" Source="{Binding ImageSource}" Margin="916,602,876,286" RenderTransformOrigin="0.5,0.5" Width="128">
             <Image.RenderTransform>

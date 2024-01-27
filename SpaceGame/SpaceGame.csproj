@@ -8,8 +8,21 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Images\" />
-    <Folder Include="Images\System\TEMP\" />
+    <None Remove="Images\System\Planets\Resources\copper.png" />
+    <None Remove="Images\System\Planets\Resources\iron.png" />
+    <None Remove="Images\System\Planets\Resources\platinum.png" />
+    <None Remove="Images\System\Planets\Resources\silicon.png" />
+    <None Remove="Images\System\Planets\Resources\uranium.png" />
+    <None Remove="Images\System\TEMP\placeholder.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Images\System\Planets\Resources\copper.png" />
+    <Resource Include="Images\System\Planets\Resources\iron.png" />
+    <Resource Include="Images\System\Planets\Resources\platinum.png" />
+    <Resource Include="Images\System\Planets\Resources\silicon.png" />
+    <Resource Include="Images\System\Planets\Resources\uranium.png" />
+    <Resource Include="Images\System\TEMP\placeholder.png" />
   </ItemGroup>
 
 </Project>
