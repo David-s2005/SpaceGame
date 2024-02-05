@@ -27,24 +27,24 @@ namespace SpaceGame
             }
         }
 
-        public void ageUniverse() 
+        public void ageUniverse(ulong _uniage) 
         {
             Random random = new Random();
 
             if (uniage <= 20000000000)
             {
                 double randomrangeearly = random.NextDouble() * (1.15 - 1.1) + 1.1;
-                uniage = (ulong)randomrangeearly * uniage;
+                uniage = (ulong)(randomrangeearly * _uniage);
             }
             else if (uniage <= 50000000000)
             {
                 double randomrangeaging = random.NextDouble() * (1.25 - 1.15) + 1.15;
-                uniage = (ulong)randomrangeaging * uniage;
+                uniage = (ulong)(randomrangeaging * _uniage);
             }
             else if (uniage <= 200000000000)
             {
                 double randomrangeold = random.NextDouble() * (1.35 - 1.25) + 1.25;
-                uniage = (ulong)randomrangeold * uniage;
+                uniage = (ulong)(randomrangeold * _uniage);
             }
             else if (uniage < 1000000000000) 
             {

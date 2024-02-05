@@ -8,7 +8,7 @@ namespace SpaceGame
 {
     class Planet : CelestialObject
     {
-        private string type;
+        public string name;
 
         private string imagesource;
 
@@ -23,6 +23,8 @@ namespace SpaceGame
                 imagesource = value;
             }
         }
+
+        private string type;
 
         public string Type
         {
@@ -147,6 +149,40 @@ namespace SpaceGame
                 corrupteddescription = value;
             }
         }
+
+        public List<String> PlanetNames = new List<String>()
+        {
+            "Milmiabos",
+            "Midaozuno",
+            "Occides",
+            "Ntennonoe",
+            "Nauturn",
+            "Chuiter",
+            "Leyatania",
+            "Brubicarro",
+            "Strorth",
+            "Nsurn",
+            "Ophocarro",
+            "Zutretune",
+            "Ingadus",
+            "Sebroth",
+            "Curu",
+            "Loatania",
+            "Bihoter",
+            "Phosoruta",
+            "Ilyria",
+            "Grillon",
+            "Nesenope",
+            "Duchazuno",
+            "Zichora",
+            "Endion",
+            "Youphus",
+            "Peuclite",
+            "Chuurus",
+            "Gnegilea",
+            "Drora",
+            "Ileshan"
+        };
 
         public Planet(string _type, ulong _maxage, double _weight, int _habitability, Dictionary<Resource, int> _PassedResources, double _anomalyweight,
                       string _description, string _corruptingdescription, string _corrupteddescription) 

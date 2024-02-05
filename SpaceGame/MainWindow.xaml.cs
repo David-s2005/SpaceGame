@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -22,6 +23,8 @@ namespace SpaceGame
     public partial class MainWindow : Window
     {
         Random random = new Random();
+
+        Universe universe = new Universe();
 
         #region ImageResources 
 
@@ -236,12 +239,12 @@ namespace SpaceGame
 
         #region Anomalies
 
-        Anomaly anomaly_DysonSphere = new Anomaly
-        (
-            150000000000, // maximum age that anomaly can appear for.
-            "The homestar i have observed has been gaining and loosing brightness randomly whilst i was observing it. Approaching it i have realized the cause of " +
-            "the blinking is a Dyson sphere"
-        );
+        //Anomaly anomaly_DysonSphere = new Anomaly
+        //(
+        //    150000000000, // maximum age that anomaly can appear for.
+        //    "The homestar i have observed has been gaining and loosing brightness randomly whilst i was observing it. Approaching it i have realized the cause of " +
+        //    "the blinking is a Dyson sphere"
+        //);
 
         #endregion
 
@@ -595,11 +598,11 @@ namespace SpaceGame
             },
             0.75,
 
-            "",
+            "1",
 
-            "",
+            "2",
 
-            ""
+            "3"
         );
 
         Hashtable Planets = new Hashtable()
@@ -620,45 +623,27 @@ namespace SpaceGame
             // continue here.
         };
 
-        public List<String> PlanetNames = new List<String>()
-        {
-            "Milmiabos",
-            "Midaozuno",
-            "Occides",
-            "Ntennonoe",
-            "Nauturn",
-            "Chuiter",
-            "Leyatania",
-            "Brubicarro",
-            "Strorth",
-            "Nsurn",
-            "Ophocarro",
-            "Zutretune",
-            "Ingadus",
-            "Sebroth",
-            "Curu",
-            "Loatania",
-            "Bihoter",
-            "Phosoruta",
-            "Ilyria",
-            "Grillon",
-            "Nesenope",
-            "Duchazuno",
-            "Zichora",
-            "Endion",
-            "Youphus",
-            "Peuclite",
-            "Chuurus",
-            "Gnegilea",
-            "Drora",
-            "Ileshan"
-        };
-
+        List<Planet> planetList = new List<Planet>();
         #endregion
 
         public MainWindow()
         {
             InitializeComponent();
+
+            planetList.Add(RockyHell);
+            planetList.Add(WarmRockyPlanet);
+            planetList.Add(FrozenRockyPlanet);
+            planetList.Add(HellCarbonPlanet);
+            planetList.Add(WarmCarbonPlanet);
+            planetList.Add(FrozenCarbonPlanet);
+            planetList.Add(HellGasGiant);
+            planetList.Add(WarmGasGiant);
+            planetList.Add(FrozenGasGiant);
+            planetList.Add(HotParadise);
+            planetList.Add(WarmParadize);
+            planetList.Add(ColdParadise);
+            planetList.Add(EarthDuplicate);
+            
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e) 
@@ -687,7 +672,23 @@ namespace SpaceGame
 
         private void buttonTravel_Click(object sender, RoutedEventArgs e)
         {
+            String uniAgeString = LabelUniAge.Content.ToString();
+            if (ulong.TryParse(uniAgeString, out ulong convertedAge) == true)
+            {
+                universe.ageUniverse(convertedAge);
+            }
+            else 
+            {
+                throw new Exception();
+            }
+            LabelUniAge.Content = universe.universeage;
 
+            Star star = new Star(planetList);
+            foreach(Planet planet in star.PlanetList) 
+            {
+                LabelHospitality.Content = planet.Name;
+                LabelUniAge.Content = universe.universeage;
+            }
         }
     }
 }

@@ -45,7 +45,7 @@
         <Label x:Name="LabelShield" Content="100" HorizontalAlignment="Left" Margin="943,780,0,0" VerticalAlignment="Top" FontSize="36"/>
         <Label x:Name="LabelHealth" Content="100" HorizontalAlignment="Left" Margin="1081,780,0,0" VerticalAlignment="Top" FontSize="36"/>
         <Label x:Name="LabelAI" Content="100" HorizontalAlignment="Left" Margin="1211,780,0,0" VerticalAlignment="Top" FontSize="36"/>
-        <Label x:Name="LabelUniAge" Content="13,800,000,000" HorizontalAlignment="Left" Margin="1322,311,0,0" VerticalAlignment="Top" FontSize="20"/>
+        <Label x:Name="LabelUniAge" Content="13800000000" HorizontalAlignment="Left" Margin="1322,311,0,0" VerticalAlignment="Top" FontSize="20"/>
         <ComboBox x:Name="ComboBoxStar" HorizontalAlignment="Left" Margin="1322,146,0,0" VerticalAlignment="Top" Width="186" Height="50"/>
         <Label x:Name="LabelStar" Content="Star" HorizontalAlignment="Left" Margin="1322,104,0,0" VerticalAlignment="Top" FontSize="24"/>
         <Label x:Name="LabelPlanet" Content="Planet" HorizontalAlignment="Left" Margin="1322,196,0,0" VerticalAlignment="Top" FontSize="24"/>
