@@ -8,6 +8,8 @@ namespace SpaceGame
 {
     class Planet : CelestialObject
     {
+        Random random = new Random();
+
         public string name;
 
         private string imagesource;
@@ -150,39 +152,41 @@ namespace SpaceGame
             }
         }
 
-        public List<String> PlanetNames = new List<String>()
+        Dictionary<int, string> planetNames = new Dictionary<int, string>()
         {
-            "Milmiabos",
-            "Midaozuno",
-            "Occides",
-            "Ntennonoe",
-            "Nauturn",
-            "Chuiter",
-            "Leyatania",
-            "Brubicarro",
-            "Strorth",
-            "Nsurn",
-            "Ophocarro",
-            "Zutretune",
-            "Ingadus",
-            "Sebroth",
-            "Curu",
-            "Loatania",
-            "Bihoter",
-            "Phosoruta",
-            "Ilyria",
-            "Grillon",
-            "Nesenope",
-            "Duchazuno",
-            "Zichora",
-            "Endion",
-            "Youphus",
-            "Peuclite",
-            "Chuurus",
-            "Gnegilea",
-            "Drora",
-            "Ileshan"
+            {1, "Milmiabos" },
+            {2, "Midaozuno" },
+            {3, "Occides" },
+            {4, "Ntennonoe" },
+            {5, "Nauturn" },
+            {6, "Chuiter" },
+            {7, "Leyatania" },
+            {8, "Brubicarro" },
+            {9, "Strorth" },
+            {10, "Nsurn" },
+            {11, "Ophocarro" },
+            {12, "Zutretune" },
+            {13, "Ingadus" },
+            {14, "Sebroth" },
+            {15, "Curu" },
+            {16, "Loatania" },
+            {17, "Bihoter" },
+            {18, "Phosoruta" },
+            {19, "Ilyria" },
+            {20, "Grillon" },
+            {21, "Nesenope" },
+            {22, "Duchazuno" },
+            {23, "Zichora" },
+            {24, "Endion" },
+            {25, "Youphus" },
+            {26, "Peuclite" },
+            {27, "Chuurus" },
+            {28, "Gnegilea" },
+            {29, "Drora" },
+            {30, "Ileshan" }
         };
+
+        public List<String> usedNames = new List<String>();
 
         public Planet(string _type, ulong _maxage, double _weight, int _habitability, Dictionary<Resource, int> _PassedResources, double _anomalyweight,
                       string _description, string _corruptingdescription, string _corrupteddescription) 
@@ -196,6 +200,33 @@ namespace SpaceGame
             this.description = _description;
             this.corruptingdescription = _corruptingdescription;
             this.corrupteddescription = _corrupteddescription;
+        }
+
+        public void generatePlanetNames(int _totalPlanets)
+        {
+            usedNames.Clear();
+            string generatedName;
+            bool isUnique;
+
+            for (int i = 0; i != _totalPlanets; i++)
+            {
+                isUnique = false;
+
+                while (isUnique == false)
+                {
+                    generatedName = planetNames[random.Next(1, planetNames.Count)];
+                    if (usedNames.Contains(generatedName))
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        isUnique = true;
+                        name = generatedName;
+                        usedNames.Add(generatedName);
+                    }
+                }
+            }
         }
 
         // Use this method to execute a random anomaly event when the anomaly detection is successful

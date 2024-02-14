@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SpaceGame;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Xml.Linq;
 
 namespace SpaceGame
 {
@@ -238,13 +240,6 @@ namespace SpaceGame
         #endregion
 
         #region Anomalies
-
-        //Anomaly anomaly_DysonSphere = new Anomaly
-        //(
-        //    150000000000, // maximum age that anomaly can appear for.
-        //    "The homestar i have observed has been gaining and loosing brightness randomly whilst i was observing it. Approaching it i have realized the cause of " +
-        //    "the blinking is a Dyson sphere"
-        //);
 
         #endregion
 
@@ -605,25 +600,22 @@ namespace SpaceGame
             "3"
         );
 
-        Hashtable Planets = new Hashtable()
+        List<Planet> planetList = new List<Planet> 
         {
-            {1, RockyHell },
-            {2, WarmRockyPlanet },
-            {3, FrozenRockyPlanet },
-            {4, HellCarbonPlanet},
-            {5, WarmCarbonPlanet},
-            {6, FrozenCarbonPlanet},
-            {7, HellGasGiant},
-            {8, WarmGasGiant},
-            {9, FrozenGasGiant},
-            {10, HotParadise},
-            {11, WarmParadize},
-            {12, ColdParadise},
-            {13, EarthDuplicate}
-            // continue here.
+            RockyHell,
+            WarmRockyPlanet,
+            FrozenRockyPlanet,
+            HellCarbonPlanet,
+            WarmCarbonPlanet,
+            FrozenCarbonPlanet,
+            HellGasGiant,
+            WarmGasGiant,
+            FrozenGasGiant,
+            HotParadise,
+            WarmParadize,
+            ColdParadise,
+            EarthDuplicate
         };
-
-        List<Planet> planetList = new List<Planet>();
         #endregion
 
         public MainWindow()
@@ -673,6 +665,9 @@ namespace SpaceGame
         private void buttonTravel_Click(object sender, RoutedEventArgs e)
         {
             String uniAgeString = LabelUniAge.Content.ToString();
+            ComboBoxStar.Items.Clear();
+            ComboBoxPlanet.Items.Clear();
+
             if (ulong.TryParse(uniAgeString, out ulong convertedAge) == true)
             {
                 universe.ageUniverse(convertedAge);
@@ -681,14 +676,17 @@ namespace SpaceGame
             {
                 throw new Exception();
             }
-            LabelUniAge.Content = universe.universeage;
+            LabelUniAge.Content = universe.universeage; 
 
             Star star = new Star(planetList);
-            foreach(Planet planet in star.PlanetList) 
+            int totalSystemPlanets = random.Next(1, 7);
+            HotParadise.generatePlanetNames(totalSystemPlanets);
+
+            foreach (string planetName in HotParadise.usedNames) 
             {
-                LabelHospitality.Content = planet.Name;
-                LabelUniAge.Content = universe.universeage;
+                ComboBoxPlanet.Items.Add(planetName);
             }
+            
         }
     }
 }
