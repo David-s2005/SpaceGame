@@ -2,8 +2,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -61,7 +63,7 @@ namespace SpaceGame
 
         #endregion
 
-        SpaceCraft Player = new SpaceCraft();
+        static SpaceCraft Player = new SpaceCraft();
 
         static Resource Iron = new Resource("Iron");
         static Resource Copper = new Resource("Copper");
@@ -82,9 +84,10 @@ namespace SpaceGame
             0, // Health modifer, changes maxhealth of ship
             0, // Health regen modifier
             0, // Shield modifier
-            0, // Shield regen modifier
+            0, // Shield regen 
+            0, // Damage output
             true, // unlocked
-
+            true, // operable?
             new Dictionary<Resource, int> // repair dictionary
             {
                 {Iron, 1},
@@ -104,7 +107,7 @@ namespace SpaceGame
             }
         );
 
-        Module modulelectromagneticreactivearmor = new Module
+        Module moduleElectroMagneticReactiveArmor = new Module
         (
             "Electromagnetic Reactive Armor",
 
@@ -112,15 +115,16 @@ namespace SpaceGame
             " of technolgy by Earth standards. It utilizes the ships power generation to charge the armor with" +
             " a powerful electromagnetic field so when a projectile is about to strike the ship, the charge" +
             " will discharge into the projectile and destroy it.",
-            0,
-            2147483647,
-            0,
-            0,
-            0,
-            0,
-            true,
-
-            new Dictionary<Resource, int> 
+            0, // Level
+            2147483647, // Module health
+            0, // Health modifier
+            0, // Health Regen modifier
+            80, // Shield modifier
+            0, // Shield regen modifier
+            0, // Damage output
+            true, // Unlocked
+            true, // operable?
+            new Dictionary<Resource, int>
             {
                 {Iron, 1},
                 {Copper, 3},
@@ -139,19 +143,20 @@ namespace SpaceGame
             }
         );
 
-        Module modulehighbetafusionreactor = new Module
+        Module moduleHighBetaFusionReactor = new Module
         (
             "High Beta Fusion Reactor",
-            
-            "A compact and efficient source of energy. Capable of running early Nuemann probes.",
-            0,
-            100,
-            0,
-            0,
-            0,
-            0,
-            true,
 
+            "A compact and efficient source of energy. Capable of running early Nuemann probes.",
+            0, // Level
+            100, // Module health
+            0, // Health modifier
+            0, // Health regen modifier
+            0, // Shield modifier
+            17, // Shield regen
+            0, // Damage output
+            true, // Unlocked
+            true, // operable?
             new Dictionary<Resource, int>
             {
                 {Iron, 2},
@@ -171,20 +176,21 @@ namespace SpaceGame
             }
         );
 
-        Module modulebasicrepairsystem = new Module
+        Module moduleBasicRepairSystem = new Module
         (
             "Basic Repair System",
-            
+
             " a system of sensors, computers and autonomous systems that detect and repair" +
             " faults within the ship. Relies on the reactor for power.",
-            0,
-            150,
-            0, 
-            0,
-            0,
-            0,
-            true,
-
+            0, // Level
+            150, // Module Health
+            0, // Health modifier
+            7, // Health regen modifier
+            0, // Shield modifier
+            0, // Shield regen
+            0, // Damage output
+            true, // Unlocked
+            true, // operable?
             new Dictionary<Resource, int>
             {
                 {Iron, 1},
@@ -210,14 +216,15 @@ namespace SpaceGame
 
             "A devastating 900-RPM 30mm cannon. It can fire a wide assortment of ammunition, such" +
             " as high explosive ammo or sabot-discarding rounds.",
-            0,
-            200,
-            0,
-            0,
-            0,
-            0,
-            true,
-
+            0, // Level
+            200, // Module Health
+            0, // Health modifier
+            0, // Health regen
+            0, // Shield modifier
+            0, // Shield regen
+            7, // damage
+            true, // Unlocked
+            true, // operable?
             new Dictionary<Resource, int>
             {
                 {Iron, 1},
@@ -237,9 +244,299 @@ namespace SpaceGame
             }
         );
 
+        #region Alien Modules
+
+        static Module uniqueAlienSolarArray = new Module
+        (
+            "Alien Solar Array",
+
+            "A marvel of engineering, it is a marriage of exotic meta-materials and photonics circuitry woven" +
+            " into a incomprehensible cacophony of technology. Its sophistication is simply to great for me" +
+            " to even begin to understand.",
+            10, // Level (MAX!, reserved for unique modules!)
+            1500, // Module Health
+            0, // Health modifier
+            3, // Health regen
+            15, // Shield modifier
+            3, // Shield regen
+            5, // damage
+            false, // Unlocked
+            true, // operable?
+            new Dictionary<Resource, int>
+            {
+                {Iron, 0},
+                {Copper, 0},
+                {Platinum, 0},
+                {Uranium, 0},
+                {Silicon, 0}
+            },
+
+            new Dictionary<Resource, int> // UNREPAIRABLE!
+            {
+                {Iron, 9999},
+                {Copper, 9999},
+                {Platinum, 9999},
+                {Uranium, 9999},
+                {Silicon, 9999}
+            }
+        );
+
+        Module uniqueAlienShieldTransporter = new Module
+        (
+            "Dimensional Transporter",
+
+            "This piece of technology applies some sort of technology that allows the manipulation of" +
+            " matter into diffents planes of existance, thus we can use this to select part of the ship " +
+            " i would like to temporarily transport away to reduce or even prevent oncoming threats.",
+            10, // Level (MAX!, reserved for unique modules!)
+            750, // Module Health
+            0, // Health modifier
+            0, // Health regen
+            160, // Shield modifier
+            0, // Shield regen
+            0, // damage
+            false, // Unlocked
+            true, // operable?
+            new Dictionary<Resource, int>
+            {
+                {Iron, 0},
+                {Copper, 0},
+                {Platinum, 0},
+                {Uranium, 0},
+                {Silicon, 0}
+            },
+
+            new Dictionary<Resource, int> // UNREPAIRABLE!
+            {
+                {Iron, 9999},
+                {Copper, 9999},
+                {Platinum, 9999},
+                {Uranium, 9999},
+                {Silicon, 9999}
+            }
+        );
+
+        Module uniqueAlienAntiMatterCannon = new Module
+        (
+            "Anti-matter Cannon",
+
+            "Simple in idea, complicated in execution. This anti-matter cannon simply launches a small" + 
+            " amount of anti-matter at a target. Since anti-matter will react with any normal matter" +
+            " very little can be done to prevent such attack.",
+            10, // Level (MAX!, reserved for unique modules!)
+            2025, // Module Health
+            0, // Health modifier
+            0, // Health regen
+            0, // Shield modifier
+            0, // Shield regen
+            55, // damage
+            false, // Unlocked
+            true, // operable?
+            new Dictionary<Resource, int>
+            {
+                {Iron, 0},
+                {Copper, 0},
+                {Platinum, 0},
+                {Uranium, 0},
+                {Silicon, 0}
+            },
+
+            new Dictionary<Resource, int> // UNREPAIRABLE!
+            {
+                {Iron, 9999},
+                {Copper, 9999},
+                {Platinum, 9999},
+                {Uranium, 9999},
+                {Silicon, 9999}
+            }
+        );
+
+        Module uniqueAlienFluxReactor = new Module
+        (
+            "Zero-Point Flux Reactor",
+
+            "A reactor that takes advantage of the quantum vacuum and its flucations. This can generate a means" +
+            " of power generation anywhere, and virtually infinite.",
+            10, // Level (MAX!, reserved for unique modules!)
+            750, // Module Health
+            0, // Health modifier
+            0, // Health regen
+            0, // Shield modifier
+            60, // Shield regen
+            0, // damage
+            false, // Unlocked
+            true, // operable?
+            new Dictionary<Resource, int>
+            {
+                {Iron, 0},
+                {Copper, 0},
+                {Platinum, 0},
+                {Uranium, 0},
+                {Silicon, 0}
+            },
+
+            new Dictionary<Resource, int> // UNREPAIRABLE!
+            {
+                {Iron, 9999},
+                {Copper, 9999},
+                {Platinum, 9999},
+                {Uranium, 9999},
+                {Silicon, 9999}
+            }
+        );
+
+        Module uniqueAlienMatterSynthesizer = new Module
+        (
+            "Matter Synthesizer",
+
+            "",
+            10, // Level (MAX!, reserved for unique modules!)
+            2025, // Module Health
+            0, // Health modifier
+            0, // Health regen
+            0, // Shield modifier
+            0, // Shield regen
+            55, // damage
+            false, // Unlocked
+            true, // operable?
+            new Dictionary<Resource, int>
+            {
+                {Iron, 0},
+                {Copper, 0},
+                {Platinum, 0},
+                {Uranium, 0},
+                {Silicon, 0}
+            },
+
+            new Dictionary<Resource, int> // UNREPAIRABLE!
+            {
+                {Iron, 9999},
+                {Copper, 9999},
+                {Platinum, 9999},
+                {Uranium, 9999},
+                {Silicon, 9999}
+            }
+        );
+        #endregion
+
+
         #endregion
 
         #region Anomalies
+
+        public static void grantSolarTech() 
+        {
+            Player.ModuleList.Add(uniqueAlienSolarArray);
+        }
+
+        static Anomaly anomalyDysonSphereFriendly = new Anomaly
+        (
+            "Friendly Dyson Sphere",
+            80000000000, // maxage
+            "After arriving in the target system i have uncovered a Dyson Sphere!. A smaller part of the overall" + // Description
+            " Structure detaches and approached rapidly. Before i can activate the shields & weapons multiple data" +
+            " packets into the communication buffer, reading these unveils a wealth of science and information" +
+            " A large amount of resources also miraculously being found in the cargo bay.",
+            0, // Damage
+            6, // Science
+            new Dictionary<Resource, int>
+            {
+                {Iron, 1},
+                {Copper, 2},
+                {Platinum, 2},
+                {Uranium, 5},
+                {Silicon, 1}
+            },
+            grantSolarTech,
+            "pack://application:,,,/SpaceGame;component/Images/System/TEMP/placeholder.png" // change
+        );
+        static Anomaly anomalyDysonSphereNeutral = new Anomaly
+        (
+            "Neutral Dyson Sphere",
+            80000000000,
+            "After arriving in the target system i have uncovered a Dyson Sphere!. After observing it for a few hours" +
+            " nothing happens, i move in closer to the structure itself a strange force compels the whole ship to move" +
+            " away from the structure itself. I figured i should leave the thing alone.",
+            0,
+            0,
+            new Dictionary<Resource, int>
+            {
+                {Iron, 0},
+                {Copper, 0},
+                {Platinum, 0},
+                {Uranium, 0},
+                {Silicon, 0}
+            },
+            "pack://application:,,,/SpaceGame;component/Images/System/TEMP/placeholder.png" // change
+        );
+        static Anomaly anomalyDysonSphereHostile = new Anomaly
+        (
+            "Hostile Dyson Sphere",
+            80000000000,
+            "After arriving in the target system i have uncovered a Dyson Sphere!. Almost immediately after arriving" +
+            " many compondents of the structure separate and start aiming their mirrors toward me. I immediately active" +
+            " the engines and flee, but not before the compondents dump a huge amount of heat unto the ship",
+            80,
+            0,
+            new Dictionary<Resource, int> 
+            {
+                {Iron, 0},
+                {Copper, 0},
+                {Platinum, 0},
+                {Uranium, 0},
+                {Silicon, 0}
+            },
+            "pack://application:,,,/SpaceGame;component/Images/System/TEMP/placeholder.png" // change
+        );
+        static Anomaly anomalyAlienStructureUninteresting = new Anomaly
+        (
+            "Boring Alien Structure",
+            50000000000,
+            "After analysing the surface of the planet i have uncovered a unusual light pattern being returned from" +
+            " specific location on the surface. A surface probe was deployed. The live footage returns a video of " +
+            " stucture of alien origin. Though these remains are to decrepit to be of any substance, however we can" +
+            " deduce a bit of information regarding the alien species that used to live here by observing the overall structure.",
+            0,
+            2,
+            new Dictionary<Resource, int> 
+            {
+                {Iron, 0},
+                {Copper, 0},
+                {Platinum, 0},
+                {Uranium, 0},
+                {Silicon, 0}
+            },
+            "pack://application:,,,/SpaceGame;component/Images/System/TEMP/placeholder.png" // change
+        );
+        static Anomaly anomalyAlienStructurePreserved = new Anomaly
+        (
+            "Preserved Alien Structure",
+            40000000000,
+            "After analysing the surface of the planet i have uncovered a unusual light pattern being returned from" +
+            " specific location on the surface. A surface probe was deployed. The live footage returns a video of " +
+            " stucture of alien origin. Luckily these remains seem to be relatively intact, thus giving us a wealth" +
+            " of history and technnology regarding the past owners of these ruins.",
+            0,
+            4,
+            new Dictionary<Resource, int>
+            {
+                {Iron, 1},
+                {Copper, 1},
+                {Platinum, 0},
+                {Uranium, 0},
+                {Silicon, 0}
+            },
+            "pack://application:,,,/SpaceGame;component/Images/System/TEMP/placeholder.png" // change
+        );
+
+        Dictionary<int, Anomaly> hashMapAnomaly = new Dictionary<int, Anomaly>()
+        {
+            {0, anomalyDysonSphereFriendly },
+            {1, anomalyDysonSphereNeutral },
+            {2, anomalyDysonSphereHostile },
+            {3, anomalyAlienStructureUninteresting },
+            {4, anomalyAlienStructurePreserved }
+        };
 
         #endregion
 
@@ -297,8 +594,8 @@ namespace SpaceGame
         (
             "Rocky Hell Planet", // type
             18446744073709551615, // maxage
-            0.4, // weight
-            15, // habitability
+            0.4, // weight, out of 5
+            15, // habitability out of 100
             new Dictionary<Resource, int> // resource dictionary
             {
                 {Iron, 4},
@@ -307,7 +604,11 @@ namespace SpaceGame
                 {Uranium, 0},
                 {Silicon, 2}
             },
-            0.15, // anomaly probability
+            new List<Anomaly> // List list outlines what anomalies can occur here.
+            {
+                
+            },
+            0.15, // anomaly probability out of 100
 
             "I have arrived at a Hellish, rocky world. my scanners have concluded that is planet is very uninviting for humans, but somewhat rich in resources." +
             " Could be worthwhile to maybe obtain some of these resources.", // normal description
@@ -330,6 +631,10 @@ namespace SpaceGame
                 {Platinum, 1},
                 {Uranium, 0},
                 {Silicon, 2}
+            },
+            new List<Anomaly>
+            {
+
             },
             0.23,
 
@@ -355,6 +660,10 @@ namespace SpaceGame
                 {Uranium, 0},
                 {Silicon, 1}
             },
+            new List<Anomaly>
+            {
+
+            },
             0.19,
 
             "I've got a boring rocky planet here. Its pretty cold here so the humans would hate this place. It comes with the usual deposits of resources" +
@@ -378,6 +687,10 @@ namespace SpaceGame
                 {Platinum, 0},
                 {Uranium, 0},
                 {Silicon, 4}
+            },
+            new List<Anomaly>
+            {
+
             },
             0.2,
 
@@ -403,6 +716,10 @@ namespace SpaceGame
                 {Uranium, 0},
                 {Silicon, 4}
             },
+            new List<Anomaly>
+            {
+
+            },
             0.25,
 
             "I have found a carbon planet. The temperature is ok for humans but i couldn't imagine them frolicking through these barren landscapes. The" +
@@ -427,6 +744,10 @@ namespace SpaceGame
                 {Uranium, 0},
                 {Silicon, 5}
             },
+            new List<Anomaly>
+            {
+
+            },
             0.2,
 
             "Found a carbon planet. It is very cold here, so a little less hospitable than a usual. Usual deposits of silicon are here.",
@@ -449,6 +770,10 @@ namespace SpaceGame
                 {Platinum, 0},
                 {Uranium, 0},
                 {Silicon, 1}
+            },
+            new List<Anomaly>
+            {
+
             },
             0.45,
 
@@ -475,6 +800,10 @@ namespace SpaceGame
                 {Uranium, 0},
                 {Silicon, 0}
             },
+            new List<Anomaly>
+            {
+
+            },
             0.5,
 
             "My gravimetric flux detector is screaming at this planet, a gas giant with mostly a hydrogren atomshpere. Its also present in" +
@@ -497,6 +826,10 @@ namespace SpaceGame
                 {Platinum, 0},
                 {Uranium, 0},
                 {Silicon, 0}
+            },
+            new List<Anomaly>
+            {
+
             },
             0.4,
 
@@ -522,6 +855,10 @@ namespace SpaceGame
                 {Uranium, 0},
                 {Silicon, 2}
             },
+            new List<Anomaly>
+            {
+
+            },
             0.55,
 
             "",
@@ -544,6 +881,10 @@ namespace SpaceGame
                 {Platinum, 1},
                 {Uranium, 0},
                 {Silicon, 2}
+            },
+            new List<Anomaly>
+            {
+
             },
             0.65,
 
@@ -568,6 +909,10 @@ namespace SpaceGame
                 {Uranium, 0},
                 {Silicon, 2}
             },
+            new List<Anomaly>
+            {
+
+            },
             0.50,
 
             "",
@@ -590,6 +935,10 @@ namespace SpaceGame
                 {Platinum, 1},
                 {Uranium, 1},
                 {Silicon, 4}
+            },
+            new List<Anomaly>
+            {
+
             },
             0.75,
 

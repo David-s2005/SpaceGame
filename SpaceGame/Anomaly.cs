@@ -1,13 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace SpaceGame
 {
     class Anomaly : CelestialObject
     {
+        public delegate void AnomalyAction();
+
+        private AnomalyAction uniqueAction;
+
+        public void ExecuteUniqueEvent() 
+        {
+            uniqueAction();
+        }
+
+        private string name;
+
+        public string Name 
+        {
+            get 
+            {
+                return name;
+            }
+            set 
+            {
+                name = value;
+            }
+        }
+
         private ulong maxage;
 
         public ulong MaxAge
@@ -50,29 +75,31 @@ namespace SpaceGame
             }
         }
 
-        private List <Resource> anomalyResources = new List <Resource> ();
+        private Dictionary <Resource, int> anomalyResources = new Dictionary <Resource, int> ();
 
-        private int weight;
+        public Uri UriAnomaly = new Uri("pack://application:,,,/SpaceGame;component/Images/System/TEMP/placeholder.png");
 
-        public int Weight 
+        public Anomaly(string _name, ulong _maxage, string _description, int _damage, int _science, Dictionary<Resource, int> _anomalyresources, string _imageSource) // use this constructor when the anomaly has no unique events
         {
-            get 
-            {
-                return weight;
-            }
-            set 
-            {
-                weight = value;
-            }
-        }
-
-        Anomaly(ulong _maxage, string _description, int _damage, List<Resource> _anomalyresources, int _weight) 
-        {
+            name = _name;
             maxage = _maxage;
             Description = _description;
             Damage = _damage;
+            Science = _science;
             anomalyResources = _anomalyresources;
-            Weight = _weight;
+            UriAnomaly = new Uri(_imageSource);
+        }
+
+        public Anomaly(string _name, ulong _maxage, string _description, int _damage, int _science, Dictionary<Resource, int> _anomalyresources, AnomalyAction uniqueAction, string _imageSource)// this constructor will be used for unique events 
+        {                                                                                                                                                                   // e.g. a anomaly granting a unique tech.
+            name = _name;
+            maxage = _maxage;
+            Description = _description;
+            Damage = _damage;
+            Science = _science;
+            anomalyResources = _anomalyresources;
+            this.uniqueAction = uniqueAction;
+            UriAnomaly = new Uri(_imageSource);
         }
     }
 }

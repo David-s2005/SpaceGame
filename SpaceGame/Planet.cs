@@ -96,6 +96,8 @@ namespace SpaceGame
             }
         }
 
+        public List<Anomaly> potentialAnomalies = new List<Anomaly>();
+
         private double anomalyweight;
 
         public double AnomalyWeight
@@ -188,14 +190,15 @@ namespace SpaceGame
 
         public List<String> usedNames = new List<String>();
 
-        public Planet(string _type, ulong _maxage, double _weight, int _habitability, Dictionary<Resource, int> _PassedResources, double _anomalyweight,
-                      string _description, string _corruptingdescription, string _corrupteddescription) 
+        public Planet(string _type, ulong _maxage, double _weight, int _habitability, Dictionary<Resource, int> _PassedResources, List<Anomaly> _potentialAnomalies,
+            double _anomalyweight, string _description, string _corruptingdescription, string _corrupteddescription) 
         {
             this.type = _type;
             this.maxage = _maxage;
             this.weight = _weight;
             this.habitability = _habitability;
             this.resourcelist = _PassedResources;
+            this.potentialAnomalies = _potentialAnomalies;
             this.anomalyweight = _anomalyweight;
             this.description = _description;
             this.corruptingdescription = _corruptingdescription;
@@ -229,10 +232,16 @@ namespace SpaceGame
             }
         }
 
-        // Use this method to execute a random anomaly event when the anomaly detection is successful
+        // Use this method to execute a random anomaly event when the anomaly detection is successfull
         public void exploreAnomaly()
         {
-        
+            if (random.Next(0, 100) >= anomalyweight)
+            {
+                int anomalySelector = random.Next(0, potentialAnomalies.Count);
+                Anomaly selectedAnomaly = potentialAnomalies[anomalySelector];
+
+
+            }
         }
     }
 }

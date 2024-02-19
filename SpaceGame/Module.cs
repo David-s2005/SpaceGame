@@ -120,6 +120,20 @@ namespace SpaceGame
             }
         }
 
+        private int DamageOutput;
+
+        public int damageOutput
+        {
+            get 
+            {
+                return DamageOutput;
+            }
+            set 
+            {
+                DamageOutput = value;
+            }
+        }
+
         private bool unlocked;
 
         public bool Unlocked 
@@ -131,6 +145,20 @@ namespace SpaceGame
             set 
             {
                 unlocked = value;
+            }
+        }
+
+        private bool isOperable;
+
+        public bool IsOperable 
+        {
+            get 
+            {
+                return isOperable;
+            }
+            set 
+            {
+                isOperable = value;
             }
         }
             
@@ -165,7 +193,7 @@ namespace SpaceGame
         }
 
         public Module(string _name, string _description, int _level, int _modulehealth, int _healthmodifier, int _healthregenmodifier, int _shieldmodifier, int _shieldregenmodifier,
-                      bool _unlocked, Dictionary<Resource, int> _repairDictionary, Dictionary<Resource, int> _upgradeResources)
+                      int _damageOutput, bool _unlocked, bool _operable, Dictionary<Resource, int> _repairDictionary, Dictionary<Resource, int> _upgradeResources)
         {
             name = _name;
             description = _description;
@@ -175,7 +203,9 @@ namespace SpaceGame
             healthregenmodifier = _healthregenmodifier;
             shieldmodifier = _shieldmodifier;
             shieldregenmodifier = _shieldregenmodifier;
+            DamageOutput = _damageOutput;
             unlocked = _unlocked;
+            isOperable = _operable;
             repairresources = _repairDictionary;
             upgraderesources = _upgradeResources;
         }
