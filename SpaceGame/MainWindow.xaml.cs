@@ -4,6 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.Metrics;
 using System.Linq;
+using System.Numerics;
+using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -63,7 +65,7 @@ namespace SpaceGame
 
         #endregion
 
-        static SpaceCraft Player = new SpaceCraft();
+        public static SpaceCraft Player = new SpaceCraft();
 
         static Resource Iron = new Resource("Iron");
         static Resource Copper = new Resource("Copper");
@@ -119,7 +121,7 @@ namespace SpaceGame
             2147483647, // Module health
             0, // Health modifier
             0, // Health Regen modifier
-            80, // Shield modifier
+            0, // Shield modifier
             0, // Shield regen modifier
             0, // Damage output
             true, // Unlocked
@@ -542,25 +544,25 @@ namespace SpaceGame
 
         private void damageEvent(int _damage) 
         {
-            Player.Health -= _damage;
+            Player.currentHealth -= _damage;
 
-            if (Player.Health <= 0) 
+            if (Player.currentHealth <= 0) 
             {
                 // Player dies here.
             } 
 
-            LabelHealth.Content = Player.Health.ToString();
-            LabelShield.Content = Player.Shield.ToString();
+            LabelHealth.Content = Player.currentHealth.ToString();
+            LabelShield.Content = Player.currentShield.ToString();
 
-            if (Player.Health >= 90)
+            if (Player.currentHealth >= 90)
             {
                 LabelHealth.Foreground = Brushes.Green;
             }
-            else if (Player.Health >= 70)
+            else if (Player.currentHealth >= 70)
             {
                 LabelHealth.Foreground = Brushes.LightGreen;
             }
-            else if (Player.Health >= 45)
+            else if (Player.currentHealth >= 45)
             {
                 LabelHealth.Foreground = Brushes.Yellow;
             }
@@ -570,15 +572,15 @@ namespace SpaceGame
             }
 
 
-            if (Player.Shield >= 90) 
+            if (Player.currentShield >= 90) 
             {
                 LabelShield.Foreground = Brushes.Green;
             }
-            else if (Player.Shield >= 70)
+            else if (Player.currentShield >= 70)
             {
                 LabelShield.Foreground = Brushes.LightGreen;
             }
-            else if (Player.Shield >= 45)
+            else if (Player.currentShield >= 45)
             {
                 LabelShield.Foreground = Brushes.Yellow;
             }
@@ -833,7 +835,7 @@ namespace SpaceGame
             },
             0.4,
 
-            "This thing is just a fat black dot on my sensors. It is seems that it is constantly hailing hydrogen, so very hostile for" +
+            "This thing is just a fat black dot on my sensors. It is seems that it is constantly hailing hydrogen, so extremely hostile for" +
             " Humans.",
 
             "Temp > MinTemp -> SplashPixel(color.black) ?(GAS_GIANT)",
@@ -861,11 +863,11 @@ namespace SpaceGame
             },
             0.55,
 
-            "",
+            "This is very similar to earth, though it is very cold but still livable.",
 
-            "",
+            "findEarthLookAlike.ConfidenceCheck() -> 75%",
 
-            ""
+            "404 Cant find Planet(ColdEarth)"
         );
 
         static Planet WarmParadize = new Planet
@@ -888,13 +890,13 @@ namespace SpaceGame
             },
             0.65,
 
-            "",
+            "Cool, i have a planet very similar to Earth!, though it is a little close to the homestar, but still livable.",
 
-            "",
+            "Very confident confident that is livable. hot hot hot.",
 
-            ""
+            "REFERENCED MEMORY AT 0x0000000000000000 IS RESERVED."
         );
-
+        
         static Planet HotParadise = new Planet
         (
             "Hot Paradise",
@@ -915,11 +917,11 @@ namespace SpaceGame
             },
             0.50,
 
-            "",
+            "This planet is very similar to earth, however the planet is a little close to the homestar. Its not a perfect replica of earth but still livable though",
 
-            "",
+            "Planet..... Homeish?... Hot.",
 
-            ""
+            "FURNACE, EARTH, HOME, live...."
         );
 
         static Planet EarthDuplicate = new Planet
@@ -927,7 +929,7 @@ namespace SpaceGame
             "Earth Duplicate",
             50000000000,
             0.1,
-            75,
+            95,
             new Dictionary<Resource, int>
             {
                 {Iron, 5},
@@ -984,7 +986,16 @@ namespace SpaceGame
             planetList.Add(WarmParadize);
             planetList.Add(ColdParadise);
             planetList.Add(EarthDuplicate);
-            
+
+            Player.moduleList.Add(moduleInfraredScanner);
+            Player.moduleList.Add(moduleElectroMagneticReactiveArmor);
+            Player.moduleList.Add(moduleHighBetaFusionReactor);
+            Player.moduleList.Add(moduleBasicRepairSystem);
+            Player.moduleList.Add(moduleInfraredScanner);
+            Player.moduleList.Add(moduleInfraredScanner);
+            Player.moduleList.Add(moduleInfraredScanner);
+            Player.moduleList.Add(moduleInfraredScanner);
+            Player.moduleList.Add(moduleInfraredScanner);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e) 
@@ -1013,20 +1024,39 @@ namespace SpaceGame
 
         private void buttonTravel_Click(object sender, RoutedEventArgs e)
         {
+            LabelHospitality.Foreground = Brushes.Black;
+
             String uniAgeString = LabelUniAge.Content.ToString();
+            Star.systemPlanets.Clear();
             ComboBoxStar.Items.Clear();
             ComboBoxPlanet.Items.Clear();
 
-            if (ulong.TryParse(uniAgeString, out ulong convertedAge) == true)
+            try
             {
-                universe.ageUniverse(convertedAge);
-            }
-            else 
-            {
-                throw new Exception();
-            }
-            LabelUniAge.Content = universe.universeage; 
+                if (ulong.TryParse(uniAgeString, out ulong convertedAge) == true)
+                {
+                    universe.ageUniverse(convertedAge);
 
+                    if (universe.universeage == 1000000000000)
+                    {
+                        LabelUniAge.Content = "INTEGER OVERFLOW";
+                        LabelUniAge.Foreground = Brushes.Red;
+                    }
+                    else
+                    {
+                        LabelUniAge.Content = universe.universeage;
+                    }
+                }
+                else
+                {
+                    throw new Exception();
+                }
+            }
+            catch (Exception error) 
+            {
+                LabelHospitality.Content = "No Planet Scanned";
+            }
+            
             Star star = new Star(planetList);
             int totalSystemPlanets = random.Next(1, 7);
             HotParadise.generatePlanetNames(totalSystemPlanets);
@@ -1035,7 +1065,63 @@ namespace SpaceGame
             {
                 ComboBoxPlanet.Items.Add(planetName);
             }
-            
+
+            for (int iterator = 0; iterator < HotParadise.usedNames.Count; iterator++) 
+            {
+                Planet selectedPlanet = planetList[random.Next(0, planetList.Count)];
+                selectedPlanet.name = HotParadise.usedNames[iterator];
+                Star.systemPlanets.Add(selectedPlanet);
+            }
+        }
+
+        private void ComboBoxPlanet_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                string selectedPlanetName = ComboBoxPlanet.SelectedItem.ToString();
+
+                foreach (Planet planet in Star.systemPlanets)
+                {
+                    if (planet.name == selectedPlanetName)
+                    {
+                        TextBoxDescription.Text = planet.Description;
+                        LabelHospitality.Content = $"Hospitality: {planet.Habitability}";
+
+                        if (planet.Habitability <= 30)
+                        {
+                            LabelHospitality.Foreground = Brushes.Red;
+                        }
+                        else if (planet.Habitability <= 40) 
+                        {
+                            LabelHospitality.Foreground = Brushes.Orange;
+                        }
+                        else if (planet.Habitability <= 50) 
+                        {
+                            LabelHospitality.Foreground = Brushes.Yellow;
+                        }
+                        else if (planet.Habitability <= 70) 
+                        {
+                            LabelHospitality.Foreground = Brushes.Green;
+                        }
+                        else if (planet.Habitability <= 80) 
+                        {
+                            LabelHospitality.Foreground = Brushes.LightGreen;
+                        }
+                    }
+                }
+            } 
+            catch (NullReferenceException error) // this will occur when the user selects the travel button after selecting a planet since
+            {                                    // the combobox will change after the travel button is pressed, thus causing the error
+                TextBoxDescription.Text = "No Planet Scanned";      // because the selected item ceases to exist.
+                LabelHospitality.Content = "No Planet Scanned";
+            }
+        }
+
+        // This button will open the window for the tech tree / compondent menu.
+        private void buttonTechTree_Click(object sender, RoutedEventArgs e)
+        {
+            CompondentsWindow WindowTechTree = new CompondentsWindow();
+            WindowTechTree.Show();
         }
     }
 }

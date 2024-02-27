@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SpaceGame
 {
-    class Resource
+    public class Resource
     {
         private string name;
 

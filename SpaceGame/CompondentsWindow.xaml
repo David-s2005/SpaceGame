@@ -1,0 +1,15 @@
+﻿<Window x:Class="SpaceGame.CompondentsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SpaceGame"
+        mc:Ignorable="d"
+        Title="CompondentsWindow" Height="436" Width="583">
+    <Grid Background="DimGray">
+        <Image HorizontalAlignment="Left" Height="315" Margin="10,10,0,0" VerticalAlignment="Top" Width="450"/>
+        <Button x:Name="ButtonRepair" Content="Repair" HorizontalAlignment="Left" Margin="10,334,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.614,0.721" Height="30" Width="65"/>
+        <Button x:Name="ButtonChangeCompondent" Content="Change" HorizontalAlignment="Left" Margin="10,369,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.614,0.721" Height="30" Width="65"/>
+
+    </Grid>
+</Window>

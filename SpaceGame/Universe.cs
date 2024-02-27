@@ -33,17 +33,17 @@ namespace SpaceGame
 
             if (uniage <= 20000000000)
             {
-                double randomrangeearly = random.NextDouble() * (1.15 - 1.1) + 1.1;
+                double randomrangeearly = random.NextDouble() * (1.05 - 1.07) + 1.05;
                 uniage = (ulong)(randomrangeearly * _uniage);
             }
             else if (uniage <= 50000000000)
             {
-                double randomrangeaging = random.NextDouble() * (1.25 - 1.15) + 1.15;
+                double randomrangeaging = random.NextDouble() * (1.07 - 1.11) + 1.07;
                 uniage = (ulong)(randomrangeaging * _uniage);
             }
             else if (uniage <= 200000000000)
             {
-                double randomrangeold = random.NextDouble() * (1.35 - 1.25) + 1.25;
+                double randomrangeold = random.NextDouble() * (1.11 - 1.13) + 1.1;
                 uniage = (ulong)(randomrangeold * _uniage);
             }
             else if (uniage < 1000000000000) 

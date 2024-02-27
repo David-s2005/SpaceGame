@@ -7,7 +7,7 @@ using System.Web;
 
 namespace SpaceGame
 {
-    class Module : CelestialObject
+    public class Module : CelestialObject
     {
         private string name;
 

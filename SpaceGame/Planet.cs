@@ -240,7 +240,6 @@ namespace SpaceGame
                 int anomalySelector = random.Next(0, potentialAnomalies.Count);
                 Anomaly selectedAnomaly = potentialAnomalies[anomalySelector];
 
-
             }
         }
     }

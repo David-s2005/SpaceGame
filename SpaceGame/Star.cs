@@ -74,9 +74,13 @@ namespace SpaceGame
             }
         }
 
-        public List<Planet> systemPlanets = new List<Planet>(); // this list simply contains the planets orbiting the star, there is a range of 1 -> 6.
+        public static List<Planet> systemPlanets = new List<Planet>(); // this list simply contains the planets orbiting the star, there is a range of 1 -> 6.
 
-        
+        static List<Planet> returnPlanets() 
+        {
+            return systemPlanets;
+        }
+
         // THIS IS IMPORTANT. This constructor will generate a number of planets. Each planets constructors must generate the planets unique values.
         public Star(List<Planet> _planetlist) 
         {

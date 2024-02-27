@@ -6,25 +6,20 @@ using System.Threading.Tasks;
 
 namespace SpaceGame
 {
-    class SpaceCraft
+    public class SpaceCraft
     {
-        // new Resource("Iron", 0),
-        // new Resource("Copper", 0),
-        // new Resource("Platinum", 0),
-        // new Resource("Uranium", 0),
-        // new Resource("Silicon", 0)
 
-        private int health;
+        private int CurrentHealth;
 
-        public int Health 
+        public int currentHealth 
         {
             get 
             {
-                return health;
+                return CurrentHealth;
             }
             set 
             {
-                health = value;
+                CurrentHealth = value;
             }
         }
 
@@ -56,17 +51,17 @@ namespace SpaceGame
             }
         }
 
-        private int shield;
+        private int CurrentShield;
 
-        public int Shield 
+        public int currentShield 
         {
             get 
             {
-                return shield;
+                return CurrentShield;
             }
             set 
             {
-                shield = value;
+                CurrentShield = value;
             }
         }
         private int shieldregen;
@@ -111,21 +106,21 @@ namespace SpaceGame
             }
         }
 
-        private List<Resource> shipResource = new List<Resource>();
+        internal Dictionary<Resource, int> ShipResource = new Dictionary<Resource, int>();
 
-        public List<Resource> ShipResource 
+        public Dictionary<Resource, int> shipResource
         {
-            get 
+            get
             {
-                return shipResource;
+                return ShipResource;
             }
-            set 
+            set
             {
-                shipResource = value;
+                ShipResource = value;
             }
         }
 
-        private List<Module> moduleList = new List<Module>();
+        internal List<Module> moduleList = new List<Module>();
 
         public List<Module> ModuleList 
         {
@@ -141,14 +136,14 @@ namespace SpaceGame
 
         public void InflictDamage(int _damage) 
         {
-            if (shield <= _damage)
+            if (CurrentShield <= _damage)
             {
-                health -= (_damage + shield);
-                shield = 0;
+                CurrentHealth -= (_damage + CurrentShield);
+                CurrentShield = 0;
             }
             else 
             {
-                shield -= _damage;
+                CurrentShield -= _damage;
             }
         }
 
@@ -157,29 +152,39 @@ namespace SpaceGame
             // This part of the code figures out if the regeneration rate is greater than the difference between the current shield health
             // and the maximum shield health. If so then the shield will be set to the max shield otherwise the normal regeneration amount
             // is added to the shield.
-            if (shield != maxshield) 
+            if (CurrentShield != maxshield) 
             {
-                if ((maxshield - shield) < shieldregen)
+                if ((maxshield - CurrentShield) < shieldregen)
                 {
-                    shield = maxshield;
+                    CurrentShield = maxshield;
                 }
                 else 
                 {
-                    shield += shieldregen;
+                    CurrentShield += shieldregen;
                 }
             }
             // Read comment above, its essentially the same but for health. Just replace "shield" with "health".
-            if (health != maxhealth) 
+            if (CurrentHealth != maxhealth) 
             {
-                if ((maxhealth - health) < healthregen)
+                if ((maxhealth - CurrentHealth) < healthregen)
                 {
-                    health = maxhealth;
+                    CurrentHealth = maxhealth;
                 }
                 else 
                 {
-                    health += maxhealth;
+                    CurrentHealth += maxhealth;
                 }
             }
+        }
+
+        public SpaceCraft() 
+        {
+            CurrentHealth = 150;
+            healthregen = 10;
+            maxhealth = 150;
+            currentShield = 100;
+            shieldregen = 20;
+            maxshield = 100;
         }
     }
 }

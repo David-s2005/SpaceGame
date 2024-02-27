@@ -49,9 +49,11 @@
         <ComboBox x:Name="ComboBoxStar" HorizontalAlignment="Left" Margin="1322,146,0,0" VerticalAlignment="Top" Width="186" Height="50"/>
         <Label x:Name="LabelStar" Content="Star" HorizontalAlignment="Left" Margin="1322,104,0,0" VerticalAlignment="Top" FontSize="24"/>
         <Label x:Name="LabelPlanet" Content="Planet" HorizontalAlignment="Left" Margin="1322,196,0,0" VerticalAlignment="Top" FontSize="24"/>
-        <ComboBox x:Name="ComboBoxPlanet" HorizontalAlignment="Left" Margin="1322,243,0,0" VerticalAlignment="Top" Width="186" Height="50"/>
+        <ComboBox x:Name="ComboBoxPlanet" HorizontalAlignment="Left" Margin="1322,243,0,0" VerticalAlignment="Top" Width="186" Height="50" SelectionChanged="ComboBoxPlanet_SelectionChanged">
+            <ComboBox Width="120"/>
+        </ComboBox>
         <Button x:Name="buttonHibernate" Content="Hibernate" HorizontalAlignment="Left" Margin="1544,29,0,0" VerticalAlignment="Top" Height="64" Width="186" FontSize="36"/>
-        <Label x:Name="LabelData" Content="Data" HorizontalAlignment="Left" Margin="1322,418,0,0" VerticalAlignment="Top" FontSize="24"/>
+        <Label x:Name="LabelData" Content="Data" HorizontalAlignment="Left" Margin="1322,418,0,0" VerticalAlignment="Top" FontSize="24" FontStyle="Italic"/>
         <Image x:Name="imageIron" Source="{Binding ImageSource}" Margin="39,870,1753,20" RenderTransformOrigin="0.5,0.5" Width="128">
             <Image.RenderTransform>
                 <TransformGroup>
@@ -112,13 +114,14 @@
         <Label x:Name="LabelPlatinumQuantity" Content="0" HorizontalAlignment="Left" Margin="338,793,0,0" FontSize="24" Height="42" VerticalAlignment="Top"/>
         <Label x:Name="LabelUraniumQuantity" Content="0" HorizontalAlignment="Left" Margin="478,793,0,0" FontSize="24" Height="42" VerticalAlignment="Top"/>
         <Label x:Name="LabelSiliconQuantity" Content="0" HorizontalAlignment="Left" Margin="611,793,0,0" FontSize="24" Height="42" VerticalAlignment="Top"/>
-        <Label x:Name="LabelHospitality" Content="Hospitablity: No Planet Scanned" HorizontalAlignment="Left" Margin="1327,465,0,0" VerticalAlignment="Top" FontSize="24"/>
-        <Label x:Name="LabelDescription" Content="Description: No Planet Selected" HorizontalAlignment="Left" Margin="1327,507,0,0" VerticalAlignment="Top" FontSize="24" Width="562" Height="250"/>
+        <Label x:Name="LabelHospitality" Content="Hospitablity: No Planet Scanned" HorizontalAlignment="Left" Margin="1322,465,0,0" VerticalAlignment="Top" FontSize="24"/>
         <Label x:Name="LabelActions" Content="Actions" HorizontalAlignment="Left" Margin="1322,762,0,0" VerticalAlignment="Top" FontSize="24"/>
         <Button x:Name="buttonExplore" Content="Explore" HorizontalAlignment="Left" Margin="1316,814,0,0" VerticalAlignment="Top" Height="64" Width="186" FontSize="36"/>
         <Button x:Name="buttonMine" Content="Mine" HorizontalAlignment="Left" Margin="1316,899,0,0" VerticalAlignment="Top" Height="64" Width="186" FontSize="36"/>
         <Button x:Name="buttonMark" Content="Mark" HorizontalAlignment="Left" Margin="1521,814,0,0" VerticalAlignment="Top" Height="64" Width="186" FontSize="36"/>
         <Button x:Name="buttonResearch" Content="Research" HorizontalAlignment="Left" Margin="1521,899,0,0" VerticalAlignment="Top" Height="64" Width="186" FontSize="36"/>
-        <Button x:Name="buttonTechTree" Content="Tech Tree" HorizontalAlignment="Left" Margin="1316,981,0,0" VerticalAlignment="Top" Height="64" Width="186" FontSize="36"/>
+        <Button x:Name="buttonTechTree" Content="Tech Tree" HorizontalAlignment="Left" Margin="1316,981,0,0" VerticalAlignment="Top" Height="64" Width="186" FontSize="36" Click="buttonTechTree_Click"/>
+        <TextBlock x:Name="TextBoxDescription" HorizontalAlignment="Left" Margin="1327,532,0,0" TextWrapping="Wrap" Text=" " VerticalAlignment="Top" FontSize="24" Height="225" Width="544"/>
+        <Label x:Name="LabelDescription" Content="Description:" HorizontalAlignment="Left" Margin="1322,495,0,0" VerticalAlignment="Top" FontSize="24" FontStyle="Italic"/>
     </Grid>
 </Window>
