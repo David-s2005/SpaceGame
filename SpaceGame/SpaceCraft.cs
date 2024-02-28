@@ -8,7 +8,8 @@ namespace SpaceGame
 {
     public class SpaceCraft
     {
-
+        Random random = new Random();
+        
         private int CurrentHealth;
 
         public int currentHealth 
@@ -134,16 +135,87 @@ namespace SpaceGame
             }
         }
 
+        private int aiSanity;
+
+        public int AISanity
+        {
+            get
+            {
+                return aiSanity;
+            }
+            set
+            {
+                aiSanity = value;
+            }
+        }
+
+        private int maxSanity;
+
+        public int MaxSanity 
+        {
+            get 
+            {
+                return maxSanity;
+            }
+            set 
+            {
+                maxSanity = value;
+            }
+        }
+
+        private int sanityRegenAmount;
+
+        public int SanityRegenAmount 
+        {
+            get 
+            {
+                return sanityRegenAmount;
+            }
+            set 
+            {
+                sanityRegenAmount = value;
+            }
+        }
+
         public void InflictDamage(int _damage) 
         {
-            if (CurrentShield <= _damage)
+            if (CurrentShield <= _damage) // This occurs when the shield is knocked out.
             {
+                int healthBeforeDamage = CurrentHealth;
                 CurrentHealth -= (_damage + CurrentShield);
                 CurrentShield = 0;
+                int damageInflictedResult = healthBeforeDamage - currentHealth; // This is the total damage the hull incurs after its calculated. (DOESNT INCLUDE THE SHIELD!)
+
+                if (damageInflictedResult > 15)
+                {
+                    aiSanity -= random.Next(5, 10);
+                }
+                else if (damageInflictedResult > 20) 
+                {
+                    aiSanity -= random.Next(10, 15);                // Sanity will regenerate when the player flags habitable planets. The greater the habitability the greater the sanity.
+                }
+                else if (damageInflictedResult > 30) 
+                {
+                    aiSanity -= random.Next(15, 22);
+                }
+            }
+            else // occurs when shield remains
+            {
+                CurrentShield -= _damage;
+            }
+        }
+
+        public void regenerateSanity(int _planetHabitability)  // 80 / 100 = 0.8 -> AISanity += regenAmount * 0.8 <- ROUND!!!!  <-----------------------
+        {                                                      // This function will regenerate sanity according to the current planets habitability.  |
+            int regenTotal = (int)Math.Round(((double)_planetHabitability / 100) * sanityRegenAmount); //----------------------------------------------|
+
+            if (aiSanity + regenTotal > maxSanity)
+            {
+                aiSanity = maxSanity;
             }
             else 
             {
-                CurrentShield -= _damage;
+                aiSanity += regenTotal;
             }
         }
 
@@ -185,6 +257,7 @@ namespace SpaceGame
             currentShield = 100;
             shieldregen = 20;
             maxshield = 100;
+            aiSanity = 100;
         }
     }
 }

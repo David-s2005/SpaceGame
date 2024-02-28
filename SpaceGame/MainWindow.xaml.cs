@@ -944,11 +944,11 @@ namespace SpaceGame
             },
             0.75,
 
-            "1",
+            "Wow, This planet is almost the same as earth, This would make a great place to live!",
 
-            "2",
+            "Home? Looks.... Like??? Home?",
 
-            "3"
+            "!!STRING CONCATENATION ERROR!!"
         );
 
         List<Planet> planetList = new List<Planet> 
