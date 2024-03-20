@@ -154,6 +154,10 @@ namespace SpaceGame
             }
         }
 
+        public bool isResearched;
+        public bool isMined;
+        public bool isFlagged;
+
         Dictionary<int, string> planetNames = new Dictionary<int, string>()
         {
             {1, "Milmiabos" },
@@ -203,6 +207,9 @@ namespace SpaceGame
             this.description = _description;
             this.corruptingdescription = _corruptingdescription;
             this.corrupteddescription = _corrupteddescription;
+            isResearched = false;
+            isMined = false;
+            isFlagged = false;
         }
 
         public void generatePlanetNames(int _totalPlanets)
@@ -233,13 +240,16 @@ namespace SpaceGame
         }
 
         // Use this method to execute a random anomaly event when the anomaly detection is successfull
-        public void exploreAnomaly()
+        public Anomaly exploreAnomaly()
         {
             if (random.Next(0, 100) >= anomalyweight)
             {
                 int anomalySelector = random.Next(0, potentialAnomalies.Count);
-                Anomaly selectedAnomaly = potentialAnomalies[anomalySelector];
-
+                return potentialAnomalies[anomalySelector];
+            }
+            else 
+            {
+                return potentialAnomalies[0]; // null anomaly by default.
             }
         }
     }

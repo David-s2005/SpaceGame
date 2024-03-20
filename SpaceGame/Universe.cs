@@ -49,7 +49,7 @@ namespace SpaceGame
             else if (uniage < 1000000000000) 
             {
                 uniage = 1000000000000;
-                // once the universe gets this old give the label a fake interger overflow error.
+                // once the universe gets this old give the label a fake interger overflow error. Possibly end of game.
             }
         }
     }

@@ -75,29 +75,41 @@ namespace SpaceGame
             }
         }
 
-        private Dictionary <Resource, int> anomalyResources = new Dictionary <Resource, int> ();
+        public int ironQuantity;
+        public int copperQuantity;
+        public int platinumQuantity;
+        public int uraniumQuantity;
+        public int siliconQuantity;
 
         public Uri UriAnomaly = new Uri("pack://application:,,,/SpaceGame;component/Images/System/TEMP/placeholder.png");
 
-        public Anomaly(string _name, ulong _maxage, string _description, int _damage, int _science, Dictionary<Resource, int> _anomalyresources, string _imageSource) // use this constructor when the anomaly has no unique events
+        public Anomaly(string _name, ulong _maxage, string _description, int _damage, int _science, List<int> _resources, string _imageSource) // use this constructor when the anomaly has no unique events
         {
             name = _name;
             maxage = _maxage;
             Description = _description;
             Damage = _damage;
             Science = _science;
-            anomalyResources = _anomalyresources;
+            ironQuantity = _resources[0];
+            copperQuantity = _resources[1];
+            platinumQuantity = _resources[2];
+            uraniumQuantity = _resources[3];
+            siliconQuantity = _resources[4];
             UriAnomaly = new Uri(_imageSource);
         }
 
-        public Anomaly(string _name, ulong _maxage, string _description, int _damage, int _science, Dictionary<Resource, int> _anomalyresources, AnomalyAction uniqueAction, string _imageSource)// this constructor will be used for unique events 
+        public Anomaly(string _name, ulong _maxage, string _description, int _damage, int _science, List<int> _resources, AnomalyAction uniqueAction, string _imageSource)// this constructor will be used for unique events 
         {                                                                                                                                                                   // e.g. a anomaly granting a unique tech.
             name = _name;
             maxage = _maxage;
             Description = _description;
             Damage = _damage;
             Science = _science;
-            anomalyResources = _anomalyresources;
+            ironQuantity = _resources[0];
+            copperQuantity = _resources[1];
+            platinumQuantity = _resources[2];
+            uraniumQuantity = _resources[3];
+            siliconQuantity = _resources[4];
             this.uniqueAction = uniqueAction;
             UriAnomaly = new Uri(_imageSource);
         }

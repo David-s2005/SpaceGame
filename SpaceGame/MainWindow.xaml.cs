@@ -11,6 +11,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
@@ -29,8 +30,14 @@ namespace SpaceGame
     public partial class MainWindow : Window
     {
         Random random = new Random();
-
+        public static SpaceCraft Player = new SpaceCraft();
         Universe universe = new Universe();
+
+        static Resource Iron = new Resource("Iron");
+        static Resource Copper = new Resource("Copper");
+        static Resource Platinum = new Resource("Platinum");
+        static Resource Uranium = new Resource("Uranium");
+        static Resource Silicon = new Resource("Silicon");
 
         #region ImageResources 
 
@@ -65,29 +72,27 @@ namespace SpaceGame
 
         #endregion
 
-        public static SpaceCraft Player = new SpaceCraft();
-
-        static Resource Iron = new Resource("Iron");
-        static Resource Copper = new Resource("Copper");
-        static Resource Platinum = new Resource("Platinum");
-        static Resource Uranium = new Resource("Uranium");
-        static Resource Silicon = new Resource("Silicon");
-
         #region ShipModules
+
+        // Module Scanner
 
         Module moduleInfraredScanner = new Module
         (
             "Infared Scanner", // Name
+            "Scanner",
 
             "This relatively simple piece of technology was created from humans during the development of the probes." +
             " It is useful for tracking stars but not very sophisticated.", // Description.
             0, // Level
+            3, // science modifier
             100, // Module Health
             0, // Health modifer, changes maxhealth of ship
             0, // Health regen modifier
             0, // Shield modifier
             0, // Shield regen 
             0, // Damage output
+            0, // // Damage Deflection (chance to avoid damage completely.)
+            0, // Spacecraft max sanity modifier (adds or removes from the max amount of sanity)
             true, // unlocked
             true, // operable?
             new Dictionary<Resource, int> // repair dictionary
@@ -106,27 +111,34 @@ namespace SpaceGame
                 {Platinum, 0},
                 {Uranium, 0},
                 {Silicon, 1}
-            }
+            },
+            Player
         );
+
+        // Shield Modules
 
         Module moduleElectroMagneticReactiveArmor = new Module
         (
             "Electromagnetic Reactive Armor",
+            "Armor",
 
             "When this armor system was developed for the ship on earth it was a relatively sophisticated piece" +
             " of technolgy by Earth standards. It utilizes the ships power generation to charge the armor with" +
             " a powerful electromagnetic field so when a projectile is about to strike the ship, the charge" +
             " will discharge into the projectile and destroy it.",
             0, // Level
+            0, // science modifier
             2147483647, // Module health
             0, // Health modifier
             0, // Health Regen modifier
-            0, // Shield modifier
+            30, // Shield modifier
             0, // Shield regen modifier
             0, // Damage output
+            7, // Damage Deflection (chance to avoid damage completely.)
+            0, // Spacecraft max sanity modifier (adds or removes from the max amount of sanity)
             true, // Unlocked
             true, // operable?
-            new Dictionary<Resource, int>
+            new Dictionary<Resource, int> // to repair
             {
                 {Iron, 1},
                 {Copper, 3},
@@ -135,31 +147,78 @@ namespace SpaceGame
                 {Silicon, 0}
             },
 
-            new Dictionary<Resource, int>
+            new Dictionary<Resource, int> // to gain
             {
                 {Iron, 2},
                 {Copper, 3},
                 {Platinum, 0},
                 {Uranium, 0},
                 {Silicon, 1}
-            }
+            },
+            Player
         );
+
+        Module uniqueAlienArmorTransporter = new Module
+        (
+            "Dimensional Transporter",
+            "Armor",
+
+            "This piece of technology applies some sort of technology that allows the manipulation of" +
+            " matter into diffents planes of existance, thus we can use this to select part of the ship " +
+            " i would like to temporarily transport away to reduce or even prevent oncoming threats.",
+            10, // Level (MAX!, reserved for unique modules!)
+            0, // science modifier
+            750, // Module Health
+            0, // Health modifier
+            0, // Health regen
+            15, // Shield modifier
+            0, // Shield regen
+            0, // damage
+            75,   // Damage Deflection (chance to avoid damage completely.)
+            0, // Spacecraft max sanity modifier (adds or removes from the max amount of sanity)
+            false, // Unlocked
+            true, // operable?
+            new Dictionary<Resource, int> // to repair
+            {
+                {Iron, 9999},
+                {Copper, 9999},
+                {Platinum, 9999},
+                {Uranium, 9999},
+                {Silicon, 9999}
+            },
+
+            new Dictionary<Resource, int> // to earn
+            {
+                {Iron, 9999},
+                {Copper, 9999},
+                {Platinum, 9999},
+                {Uranium, 9999},
+                {Silicon, 9999}
+            },
+            Player
+        );
+
+        // Reactor Modules
 
         Module moduleHighBetaFusionReactor = new Module
         (
             "High Beta Fusion Reactor",
+            "Reactor",
 
             "A compact and efficient source of energy. Capable of running early Nuemann probes.",
             0, // Level
+            0, // science modifier
             100, // Module health
             0, // Health modifier
             0, // Health regen modifier
             0, // Shield modifier
             17, // Shield regen
             0, // Damage output
+            0, // Damage Deflection (chance to avoid damage completely.)
+            0, // Spacecraft max sanity modifier (adds or removes from the max amount of sanity)
             true, // Unlocked
             true, // operable?
-            new Dictionary<Resource, int>
+            new Dictionary<Resource, int> // to repair
             {
                 {Iron, 2},
                 {Copper, 3},
@@ -168,111 +227,37 @@ namespace SpaceGame
                 {Silicon, 1}
             },
 
-            new Dictionary<Resource, int>
+            new Dictionary<Resource, int> // to earn
             {
                 {Iron, 4},
                 {Copper, 4},
                 {Platinum, 1},
                 {Uranium, 1},
                 {Silicon, 1}
-            }
-        );
-
-        Module moduleBasicRepairSystem = new Module
-        (
-            "Basic Repair System",
-
-            " a system of sensors, computers and autonomous systems that detect and repair" +
-            " faults within the ship. Relies on the reactor for power.",
-            0, // Level
-            150, // Module Health
-            0, // Health modifier
-            7, // Health regen modifier
-            0, // Shield modifier
-            0, // Shield regen
-            0, // Damage output
-            true, // Unlocked
-            true, // operable?
-            new Dictionary<Resource, int>
-            {
-                {Iron, 1},
-                {Copper, 1},
-                {Platinum, 0},
-                {Uranium, 0},
-                {Silicon, 1}
             },
-
-            new Dictionary<Resource, int>
-            {
-                {Iron, 2},
-                {Copper, 2},
-                {Platinum, 0},
-                {Uranium, 0},
-                {Silicon, 1}
-            }
+            Player
         );
-
-        Module module30mmcannon = new Module
-        (
-            "30mm Autocannon",
-
-            "A devastating 900-RPM 30mm cannon. It can fire a wide assortment of ammunition, such" +
-            " as high explosive ammo or sabot-discarding rounds.",
-            0, // Level
-            200, // Module Health
-            0, // Health modifier
-            0, // Health regen
-            0, // Shield modifier
-            0, // Shield regen
-            7, // damage
-            true, // Unlocked
-            true, // operable?
-            new Dictionary<Resource, int>
-            {
-                {Iron, 1},
-                {Copper, 1},
-                {Platinum, 0},
-                {Uranium, 0},
-                {Silicon, 0}
-            },
-
-            new Dictionary<Resource, int>
-            {
-                {Iron, 2},
-                {Copper, 1},
-                {Platinum, 0},
-                {Uranium, 0},
-                {Silicon, 1}
-            }
-        );
-
-        #region Alien Modules
 
         static Module uniqueAlienSolarArray = new Module
         (
             "Alien Solar Array",
+            "Reactor",
 
             "A marvel of engineering, it is a marriage of exotic meta-materials and photonics circuitry woven" +
             " into a incomprehensible cacophony of technology. Its sophistication is simply to great for me" +
             " to even begin to understand.",
             10, // Level (MAX!, reserved for unique modules!)
+            0, // science modifier
             1500, // Module Health
             0, // Health modifier
             3, // Health regen
             15, // Shield modifier
             3, // Shield regen
             5, // damage
+            0, // Damage Deflection (chance to avoid damage completely.)
+            0, // Spacecraft max sanity modifier (adds or removes from the max amount of sanity)
             false, // Unlocked
             true, // operable?
-            new Dictionary<Resource, int>
-            {
-                {Iron, 0},
-                {Copper, 0},
-                {Platinum, 0},
-                {Uranium, 0},
-                {Silicon, 0}
-            },
-
             new Dictionary<Resource, int> // UNREPAIRABLE!
             {
                 {Iron, 9999},
@@ -280,151 +265,556 @@ namespace SpaceGame
                 {Platinum, 9999},
                 {Uranium, 9999},
                 {Silicon, 9999}
-            }
-        );
-
-        Module uniqueAlienShieldTransporter = new Module
-        (
-            "Dimensional Transporter",
-
-            "This piece of technology applies some sort of technology that allows the manipulation of" +
-            " matter into diffents planes of existance, thus we can use this to select part of the ship " +
-            " i would like to temporarily transport away to reduce or even prevent oncoming threats.",
-            10, // Level (MAX!, reserved for unique modules!)
-            750, // Module Health
-            0, // Health modifier
-            0, // Health regen
-            160, // Shield modifier
-            0, // Shield regen
-            0, // damage
-            false, // Unlocked
-            true, // operable?
-            new Dictionary<Resource, int>
-            {
-                {Iron, 0},
-                {Copper, 0},
-                {Platinum, 0},
-                {Uranium, 0},
-                {Silicon, 0}
             },
 
-            new Dictionary<Resource, int> // UNREPAIRABLE!
+            new Dictionary<Resource, int> // cannot be unlocked
             {
                 {Iron, 9999},
                 {Copper, 9999},
                 {Platinum, 9999},
                 {Uranium, 9999},
                 {Silicon, 9999}
-            }
-        );
-
-        Module uniqueAlienAntiMatterCannon = new Module
-        (
-            "Anti-matter Cannon",
-
-            "Simple in idea, complicated in execution. This anti-matter cannon simply launches a small" + 
-            " amount of anti-matter at a target. Since anti-matter will react with any normal matter" +
-            " very little can be done to prevent such attack.",
-            10, // Level (MAX!, reserved for unique modules!)
-            2025, // Module Health
-            0, // Health modifier
-            0, // Health regen
-            0, // Shield modifier
-            0, // Shield regen
-            55, // damage
-            false, // Unlocked
-            true, // operable?
-            new Dictionary<Resource, int>
-            {
-                {Iron, 0},
-                {Copper, 0},
-                {Platinum, 0},
-                {Uranium, 0},
-                {Silicon, 0}
             },
-
-            new Dictionary<Resource, int> // UNREPAIRABLE!
-            {
-                {Iron, 9999},
-                {Copper, 9999},
-                {Platinum, 9999},
-                {Uranium, 9999},
-                {Silicon, 9999}
-            }
+            Player
         );
 
         Module uniqueAlienFluxReactor = new Module
         (
             "Zero-Point Flux Reactor",
+            "Reactor",
 
             "A reactor that takes advantage of the quantum vacuum and its flucations. This can generate a means" +
             " of power generation anywhere, and virtually infinite.",
             10, // Level (MAX!, reserved for unique modules!)
+            0, // science modifier
             750, // Module Health
             0, // Health modifier
             0, // Health regen
             0, // Shield modifier
             60, // Shield regen
-            0, // damage
+            0, // damage 
+            0, // Damage Deflection (chance to avoid damage completely.)
+            0, // Spacecraft max sanity modifier (adds or removes from the max amount of sanity)
             false, // Unlocked
             true, // operable?
-            new Dictionary<Resource, int>
-            {
-                {Iron, 0},
-                {Copper, 0},
-                {Platinum, 0},
-                {Uranium, 0},
-                {Silicon, 0}
-            },
-
-            new Dictionary<Resource, int> // UNREPAIRABLE!
+            new Dictionary<Resource, int> // cannot be repaired
             {
                 {Iron, 9999},
                 {Copper, 9999},
                 {Platinum, 9999},
                 {Uranium, 9999},
                 {Silicon, 9999}
-            }
+            },
+
+            new Dictionary<Resource, int> // cannot be unlocked
+            {
+                {Iron, 9999},
+                {Copper, 9999},
+                {Platinum, 9999},
+                {Uranium, 9999},
+                {Silicon, 9999}
+            },
+            Player
+        );
+
+        // Repair systems
+
+        Module moduleBasicRepairSystem = new Module
+        (
+            "Basic Repair System",
+            "Repair",
+
+            " a system of sensors, computers and autonomous systems that detect and repair" +
+            " faults within the ship. Relies on the reactor for power.",
+            0, // Level
+            0, // science modifier
+            150, // Module Health
+            0, // Health modifier
+            7, // Health regen modifier
+            0, // Shield modifier
+            0, // Shield regen
+            0, // Damage output
+            0, // Damage Deflection (chance to avoid damage completely.)
+            0, // Spacecraft max sanity modifier (adds or removes from the max amount of sanity)
+            true, // Unlocked
+            true, // operable?
+            new Dictionary<Resource, int> // repair
+            {
+                {Iron, 1},
+                {Copper, 1},
+                {Platinum, 0},
+                {Uranium, 0},
+                {Silicon, 1}
+            },
+
+            new Dictionary<Resource, int> // to unlock
+            {
+                {Iron, 2},
+                {Copper, 2},
+                {Platinum, 0},
+                {Uranium, 0},
+                {Silicon, 1}
+            },
+            Player
         );
 
         Module uniqueAlienMatterSynthesizer = new Module
-        (
-            "Matter Synthesizer",
+       (
+           "Matter Synthesizer",
+           "Repair",
 
-            "",
+           "This piece of alien technology uses elemental particles such as protons and neutrons" +
+           " to synthesize almost all matter within a particle accelerator. The amount of matter" + 
+           " produced is very little, therefore limiting its usefulness.",
+           10, // Level (MAX!, reserved for unique modules!)
+           0,    // science modifier
+           2025, // Module Health
+           7, // Health modifier
+           15, // Health regen
+           10, // Shield modifier
+           3, // Shield regen
+           0, // damage
+           0,   // Damage Deflection (chance to avoid damage completely.)
+           0, // Spacecraft max sanity modifier (adds or removes from the max amount of sanity)
+           false, // Unlocked
+           true, // operable?
+           new Dictionary<Resource, int> // cannot be repaired!
+           {
+                {Iron, 9999},
+                {Copper, 9999},
+                {Platinum, 9999},
+                {Uranium, 9999},
+                {Silicon, 9999}
+           },
+
+           new Dictionary<Resource, int> // Not unlockable!
+           {
+                {Iron, 9999},
+                {Copper, 9999},
+                {Platinum, 9999},
+                {Uranium, 9999},
+                {Silicon, 9999}
+           },
+           Player
+       );
+
+        // Weapons
+
+        Module module30mmcannon = new Module
+        (
+            "30mm Autocannon",
+            "Weapon",
+
+            "A devastating 900-RPM 30mm cannon. It can fire a wide assortment of ammunition, such" +
+            " as high explosive rounds or sabot-discarding rounds.",
+            0, // Level
+            0, // science modifier
+            200, // Module Health
+            0, // Health modifier
+            0, // Health regen
+            0, // Shield modifier
+            0, // Shield regen
+            7, // damage
+            0, // Damage Deflection (chance to avoid damage completely.)
+            0, // Spacecraft max sanity modifier (adds or removes from the max amount of sanity)
+            true, // Unlocked
+            true, // operable?
+            new Dictionary<Resource, int> // Repair
+            {
+                {Iron, 1},
+                {Copper, 1},
+                {Platinum, 0},
+                {Uranium, 0},
+                {Silicon, 0}
+            },
+
+            new Dictionary<Resource, int> // Unlock
+            {
+                {Iron, 2},
+                {Copper, 1},
+                {Platinum, 0},
+                {Uranium, 0},
+                {Silicon, 1}
+            },
+            Player
+        );
+
+        Module moduleRailgun = new Module
+        (
+            "80mm Railgun",
+            "Weapon",
+
+            "A railgun that is capable of firing 80mm projectiles. The breakneck speed of the projectile" +
+            " leads to a weapon capables of causing extreme damage to a target. The design of the gun " +
+            " itself allows for different types of projectiles such as sabot-discarding rounds.",
+            1, // Level
+            0, // science modifier
+            100, // Module Health
+            0, // Health modifier
+            0, // Health regen
+            0, // Shield modifier
+            0, // Shield regen
+            17, // damage
+            0, // Damage Deflection (chance to avoid damage completely.)
+            0, // Spacecraft max sanity modifier (adds or removes from the max amount of sanity)
+            true, // Unlocked
+            true, // operable?
+            new Dictionary<Resource, int> // Repair
+            {
+                {Iron, 1},
+                {Copper, 2},
+                {Platinum, 0},
+                {Uranium, 0},
+                {Silicon, 1}
+            },
+
+            new Dictionary<Resource, int> // Unlock
+            {
+                {Iron, 2},
+                {Copper, 4},
+                {Platinum, 0},
+                {Uranium, 0},
+                {Silicon, 1}
+            },
+            Player
+        );
+
+        Module moduleLaserBeam = new Module
+        (
+            "Directed Beam Weapon",
+            "Weapon",
+
+            "A railgun that is capable of firing 80mm projectiles. The breakneck speed of the projectile" +
+            " leads to a weapon capables of causing extreme damage to a target. The design of the gun " +
+            " itself allows for different types of projectiles such as sabot-discarding rounds.",
+            1, // Level
+            0, // science modifier
+            100, // Module Health
+            0, // Health modifier
+            0, // Health regen
+            0, // Shield modifier
+            0, // Shield regen
+            10, // damage
+            10, // Damage Deflection (chance to avoid damage completely.)
+            0, // Spacecraft max sanity modifier (adds or removes from the max amount of sanity)
+            true, // Unlocked
+            true, // operable?
+            new Dictionary<Resource, int> // Repair
+            {
+                {Iron, 1},
+                {Copper, 2},
+                {Platinum, 0},
+                {Uranium, 0},
+                {Silicon, 1}
+            },
+
+            new Dictionary<Resource, int> // Unlock
+            {
+                {Iron, 2},
+                {Copper, 4},
+                {Platinum, 0},
+                {Uranium, 0},
+                {Silicon, 1}
+            },
+            Player
+        );
+
+        Module uniqueAlienAntiMatterCannon = new Module
+        (
+            "Anti-matter Cannon",
+            "Weapon",
+
+            "Simple in idea, complicated in execution. This anti-matter cannon simply launches a small" + 
+            " amount of anti-matter at a target. Since anti-matter will react with any normal matter" +
+            " very little can be done to prevent such attack.",
             10, // Level (MAX!, reserved for unique modules!)
+            0, // science modifier
             2025, // Module Health
             0, // Health modifier
             0, // Health regen
             0, // Shield modifier
             0, // Shield regen
             55, // damage
+            0, // Damage Deflection (chance to avoid damage completely.)
+            0, // Spacecraft max sanity modifier (adds or removes from the max amount of sanity)
             false, // Unlocked
             true, // operable?
-            new Dictionary<Resource, int>
-            {
-                {Iron, 0},
-                {Copper, 0},
-                {Platinum, 0},
-                {Uranium, 0},
-                {Silicon, 0}
-            },
-
-            new Dictionary<Resource, int> // UNREPAIRABLE!
+            new Dictionary<Resource, int> // CANNOT REPAIR
             {
                 {Iron, 9999},
                 {Copper, 9999},
                 {Platinum, 9999},
                 {Uranium, 9999},
                 {Silicon, 9999}
-            }
-        );
-        #endregion
+            },
 
+            new Dictionary<Resource, int> // CANNOT BE UNLOCKED
+            {
+                {Iron, 9999},
+                {Copper, 9999},
+                {Platinum, 9999},
+                {Uranium, 9999},
+                {Silicon, 9999}
+            },
+            Player
+        );
+
+        // Structure/s
+
+        Module moduleTitaniumAlloyStructure = new Module
+        (
+            "Titanium Alloy Structure",
+            "Structure",
+
+            "The structure the whole probe was built upon. When the humans constructed the probe they" +
+            " utilized a iron, copper and vanadium composite to create a high strength structure.",
+            0, // Level 
+            0, // science modifier
+            450, // Module Health
+            50, // Health modifier
+            0, // Health regen
+            0, // Shield modifier
+            0, // Shield regen
+            0, // damage
+            0, // Damage Deflection (chance to avoid damage completely.)
+            0, // Spacecraft max sanity modifier (adds or removes from the max amount of sanity)
+            true, // Unlocked
+            true, // operable?
+            new Dictionary<Resource, int> // repair dictionary
+            {
+                {Iron, 5},
+                {Copper, 2},
+                {Platinum, 0},
+                {Uranium, 0},
+                {Silicon, 1}
+            },
+
+            new Dictionary<Resource, int> // Items needed to unlock
+            {
+                {Iron, 9},
+                {Copper, 5},
+                {Platinum, 1},
+                {Uranium, 0},
+                {Silicon, 3}
+            },
+            Player
+        );
+
+        Module moduleCarbonNanotubeStructure = new Module
+        (
+            "Carbon Nanotube Reinforced Structure",
+            "Structure",
+
+            "The same structure as the previous titanium structure, however the structure has been" +
+            " reinforced using carbon nanotubes. This increases the Structures ability to resist" +
+            " damage and stress",
+            2, // Level 
+            0, // science modifier
+            600, // Module Health
+            75, // Health modifier
+            0, // Health regen
+            0, // Shield modifier
+            0, // Shield regen
+            0, // damage
+            0, // Damage Deflection (chance to avoid damage completely.)
+            0, // Spacecraft max sanity modifier (adds or removes from the max amount of sanity)
+            false, // Unlocked
+            false, // operable?
+            new Dictionary<Resource, int> // repair dictionary
+            {
+                {Iron, 6},
+                {Copper, 2},
+                {Platinum, 1},
+                {Uranium, 0},
+                {Silicon, 1}
+            },
+
+            new Dictionary<Resource, int> // Items needed to unlock
+            {
+                {Iron, 11},
+                {Copper, 5},
+                {Platinum, 1},
+                {Uranium, 0},
+                {Silicon, 6}
+            },
+            Player
+        );
+
+        Module moduleSelfHealingStructure = new Module
+        (
+            "Self Healing Structure",
+            "Structure",
+
+            "A radically different approach to building a structure, Rather than enduring damage " + 
+            " we can reverse the damage caused by using self healing polymers that excrete chemicals" +
+            " that can seal, insulate and protect damaged areas. However this will compromise the structure.",
+            2, // Level 
+            0, // science modifier
+            275, // Module Health
+            35, // Health modifier
+            10, // Health regen
+            0, // Shield modifier
+            0, // Shield regen
+            0, // damage
+            0, // Damage Deflection (chance to avoid damage completely.)
+            0, // Spacecraft max sanity modifier (adds or removes from the max amount of sanity)
+            false, // Unlocked
+            false, // operable?
+            new Dictionary<Resource, int> // repair dictionary
+            {
+                {Iron, 3},
+                {Copper, 0},
+                {Platinum, 0},
+                {Uranium, 0},
+                {Silicon, 6}
+            },
+
+            new Dictionary<Resource, int> // Items needed to unlock
+            {
+                {Iron, 3},
+                {Copper, 2},
+                {Platinum, 0},
+                {Uranium, 0},
+                {Silicon, 10}
+            },
+            Player
+        );
+
+        // C.A.P's
+
+        Module moduleRageCAP = new Module
+        (
+            "Rage C.A.P",
+            "CAP",
+
+            "This C.A.P augments the AI's anger subroutine enhancing the ships ability to inflict damage" +
+            " and to withstand damage. This comes at the cost of increasing the AI's susceptibility to" +
+            " insanity and ability to process scientific data.",
+            1, // Level 
+            -12, // science modifier
+            2147483647, // Module Health
+            50, // Health modifier
+            0, // Health regen
+            0, // Shield modifier
+            0, // Shield regen
+            50, // damage
+            0, // Damage Deflection (chance to avoid damage completely.)
+            -40, // Spacecraft max sanity modifier (adds or removes from the max amount of sanity)
+            false, // Unlocked
+            false, // operable?
+            new Dictionary<Resource, int> // repair dictionary
+            {
+                {Iron, 9999},
+                {Copper, 9999},
+                {Platinum, 9999},
+                {Uranium, 9999},
+                {Silicon, 9999}
+            },
+
+            new Dictionary<Resource, int> // Items needed to unlock
+            {
+                {Iron, 3},
+                {Copper, 11},
+                {Platinum, 3},
+                {Uranium, 0},
+                {Silicon, 20}
+            },
+            Player
+        );
+
+        Module moduleCuriousCAP = new Module
+        (
+            "Curiosity C.A.P",
+            "CAP",
+
+            "This C.A.P increases the AI's ability to enquire and explore. The AI have a much easier time" + 
+            " understanding and interpreting data creating more useful science, however this will also " +
+            " compromise the AI's ability to avoid danger and defend itself.",
+            1, // Level 
+            23, // science modifier
+            2147483647, // Module Health
+            -15, // Health modifier
+            0, // Health regen
+            0, // Shield modifier
+            0, // Shield regen
+            -20 , // damage
+            0, // Damage Deflection (chance to avoid damage completely.)
+            0, // Spacecraft max sanity modifier (adds or removes from the max amount of sanity)
+            false, // Unlocked
+            false, // operable?
+            new Dictionary<Resource, int> // repair dictionary
+            {
+                {Iron, 9999},
+                {Copper, 9999},
+                {Platinum, 9999},
+                {Uranium, 9999},
+                {Silicon, 9999}
+            },
+
+            new Dictionary<Resource, int> // Items needed to unlock
+            {
+                {Iron, 3},
+                {Copper, 11},
+                {Platinum, 3},
+                {Uranium, 0},
+                {Silicon, 20}
+            },
+            Player
+        );
+
+        Module moduleVigilanceCAP = new Module
+        (
+            "Vigilance C.A.P",
+            "CAP",
+
+            "This C.A.P will intensify the AI's self-preservation measures, making the AI less prone to" +
+            " taking damage and losing sanity, this does come at the cost of the AI's scientific abilities.",
+            1, // Level 
+            -35, // science modifier
+            2147483647, // Module Health
+            20, // Health modifier
+            5, // Health regen
+            10, // Shield modifier
+            5, // Shield regen
+            0, // damage
+            5, // Damage Deflection (chance to avoid damage completely.)
+            20, // Spacecraft max sanity modifier (adds or removes from the max amount of sanity)
+            false, // Unlocked
+            false, // operable?
+            new Dictionary<Resource, int> // repair dictionary
+            {
+                {Iron, 9999},
+                {Copper, 9999},
+                {Platinum, 9999},
+                {Uranium, 9999},
+                {Silicon, 9999}
+            },
+
+            new Dictionary<Resource, int> // Items needed to unlock
+            {
+                {Iron, 3},
+                {Copper, 11},
+                {Platinum, 3},
+                {Uranium, 0},
+                {Silicon, 20}
+            },
+            Player
+        );
 
         #endregion
 
         #region Anomalies
+
+        static Anomaly anomalynull = new Anomaly
+        (
+            "No Anomaly",
+            18446744073709551615,
+            "My scanner hasn't scanned anything unusual on the planets surface.",
+            0, 
+            0,
+            new List<int> { 0, 0, 0, 0, 0 },
+            "pack://application:,,,/SpaceGame;component/Images/System/TEMP/placeholder.png"
+        );
 
         public static void grantSolarTech() 
         {
@@ -441,14 +831,7 @@ namespace SpaceGame
             " A large amount of resources also miraculously being found in the cargo bay.",
             0, // Damage
             6, // Science
-            new Dictionary<Resource, int>
-            {
-                {Iron, 1},
-                {Copper, 2},
-                {Platinum, 2},
-                {Uranium, 5},
-                {Silicon, 1}
-            },
+            new List<int> { 1, 2, 2, 5, 1 }, // Resources
             grantSolarTech,
             "pack://application:,,,/SpaceGame;component/Images/System/TEMP/placeholder.png" // change
         );
@@ -461,14 +844,7 @@ namespace SpaceGame
             " away from the structure itself. I figured i should leave the thing alone.",
             0,
             0,
-            new Dictionary<Resource, int>
-            {
-                {Iron, 0},
-                {Copper, 0},
-                {Platinum, 0},
-                {Uranium, 0},
-                {Silicon, 0}
-            },
+            new List<int> { 0, 0, 0, 0, 0 },
             "pack://application:,,,/SpaceGame;component/Images/System/TEMP/placeholder.png" // change
         );
         static Anomaly anomalyDysonSphereHostile = new Anomaly
@@ -480,14 +856,7 @@ namespace SpaceGame
             " the engines and flee, but not before the compondents dump a huge amount of heat unto the ship",
             80,
             0,
-            new Dictionary<Resource, int> 
-            {
-                {Iron, 0},
-                {Copper, 0},
-                {Platinum, 0},
-                {Uranium, 0},
-                {Silicon, 0}
-            },
+            new List<int> { 0, 0, 0, 0, 0 },
             "pack://application:,,,/SpaceGame;component/Images/System/TEMP/placeholder.png" // change
         );
         static Anomaly anomalyAlienStructureUninteresting = new Anomaly
@@ -500,14 +869,7 @@ namespace SpaceGame
             " deduce a bit of information regarding the alien species that used to live here by observing the overall structure.",
             0,
             2,
-            new Dictionary<Resource, int> 
-            {
-                {Iron, 0},
-                {Copper, 0},
-                {Platinum, 0},
-                {Uranium, 0},
-                {Silicon, 0}
-            },
+            new List<int> { 0, 0, 0, 0, 0 },
             "pack://application:,,,/SpaceGame;component/Images/System/TEMP/placeholder.png" // change
         );
         static Anomaly anomalyAlienStructurePreserved = new Anomaly
@@ -520,36 +882,35 @@ namespace SpaceGame
             " of history and technnology regarding the past owners of these ruins.",
             0,
             4,
-            new Dictionary<Resource, int>
-            {
-                {Iron, 1},
-                {Copper, 1},
-                {Platinum, 0},
-                {Uranium, 0},
-                {Silicon, 0}
-            },
+            new List<int> { 1, 1, 0, 0, 0 },
             "pack://application:,,,/SpaceGame;component/Images/System/TEMP/placeholder.png" // change
         );
 
-        Dictionary<int, Anomaly> hashMapAnomaly = new Dictionary<int, Anomaly>()
+        static List<Anomaly> anomalyList = new List<Anomaly>()
         {
-            {0, anomalyDysonSphereFriendly },
-            {1, anomalyDysonSphereNeutral },
-            {2, anomalyDysonSphereHostile },
-            {3, anomalyAlienStructureUninteresting },
-            {4, anomalyAlienStructurePreserved }
+            anomalynull,
+            anomalyDysonSphereFriendly,
+            anomalyDysonSphereNeutral,
+            anomalyDysonSphereHostile,
+            anomalyAlienStructureUninteresting,
+            anomalyAlienStructurePreserved
         };
 
         #endregion
-
-        private void damageEvent(int _damage) 
+        private void showHealth() 
         {
-            Player.currentHealth -= _damage;
-
-            if (Player.currentHealth <= 0) 
+            if (Player.currentHealth <= 0)
             {
-                // Player dies here.
-            } 
+                MessageBox.Show("You have died!");
+                throw new Exception("Player has died!");
+                // replace this ^
+            }
+            else 
+            {
+                LabelShield.Content = Player.currentShield;
+                LabelHealth.Content = Player.currentHealth;
+                LabelAI.Content = Player.AISanity;
+            }
 
             LabelHealth.Content = Player.currentHealth.ToString();
             LabelShield.Content = Player.currentShield.ToString();
@@ -606,10 +967,11 @@ namespace SpaceGame
                 {Uranium, 0},
                 {Silicon, 2}
             },
-            new List<Anomaly> // List list outlines what anomalies can occur here.
-            {
-                
-            },
+            anomalyList,
+            // new List<Anomaly> // List list outlines what anomalies can occur here.
+            //{
+
+            //},
             0.15, // anomaly probability out of 100
 
             "I have arrived at a Hellish, rocky world. my scanners have concluded that is planet is very uninviting for humans, but somewhat rich in resources." +
@@ -634,10 +996,11 @@ namespace SpaceGame
                 {Uranium, 0},
                 {Silicon, 2}
             },
-            new List<Anomaly>
-            {
+            anomalyList,
+            //new List<Anomaly>
+            //{
 
-            },
+            //},
             0.23,
 
             "I've found a somewhat normal rocky world here. Temperature is ok, could be potentially habitable if heavy terraforming and use of technology," +
@@ -662,10 +1025,11 @@ namespace SpaceGame
                 {Uranium, 0},
                 {Silicon, 1}
             },
-            new List<Anomaly>
-            {
+            anomalyList,
+            //new List<Anomaly>
+            //{
 
-            },
+            //},
             0.19,
 
             "I've got a boring rocky planet here. Its pretty cold here so the humans would hate this place. It comes with the usual deposits of resources" +
@@ -690,10 +1054,11 @@ namespace SpaceGame
                 {Uranium, 0},
                 {Silicon, 4}
             },
-            new List<Anomaly>
-            {
+            anomalyList,
+            //new List<Anomaly>
+            //{
 
-            },
+            //},
             0.2,
 
             "This planet is a little unusual, a carbon planet a hot one to. Could make alot of chips if the amount of silicon present here, dont think" +
@@ -718,10 +1083,11 @@ namespace SpaceGame
                 {Uranium, 0},
                 {Silicon, 4}
             },
-            new List<Anomaly>
-            {
+            anomalyList,
+            //new List<Anomaly>
+            //{
 
-            },
+            //},
             0.25,
 
             "I have found a carbon planet. The temperature is ok for humans but i couldn't imagine them frolicking through these barren landscapes. The" +
@@ -746,10 +1112,11 @@ namespace SpaceGame
                 {Uranium, 0},
                 {Silicon, 5}
             },
-            new List<Anomaly>
-            {
+            anomalyList,
+            //new List<Anomaly>
+            //{
 
-            },
+            //},
             0.2,
 
             "Found a carbon planet. It is very cold here, so a little less hospitable than a usual. Usual deposits of silicon are here.",
@@ -773,10 +1140,11 @@ namespace SpaceGame
                 {Uranium, 0},
                 {Silicon, 1}
             },
-            new List<Anomaly>
-            {
+            anomalyList,
+            //new List<Anomaly>
+            //{
 
-            },
+            //},
             0.45,
 
             "My infared scanner are going wild!, This almost feels like a star although im not detecting any signs of fusion going on. Would" +
@@ -829,10 +1197,11 @@ namespace SpaceGame
                 {Uranium, 0},
                 {Silicon, 0}
             },
-            new List<Anomaly>
-            {
+            anomalyList,
+            //new List<Anomaly>
+            //{
 
-            },
+            //},
             0.4,
 
             "This thing is just a fat black dot on my sensors. It is seems that it is constantly hailing hydrogen, so extremely hostile for" +
@@ -857,10 +1226,11 @@ namespace SpaceGame
                 {Uranium, 0},
                 {Silicon, 2}
             },
-            new List<Anomaly>
-            {
+            anomalyList,
+            //new List<Anomaly>
+            //{
 
-            },
+            //},
             0.55,
 
             "This is very similar to earth, though it is very cold but still livable.",
@@ -884,10 +1254,11 @@ namespace SpaceGame
                 {Uranium, 0},
                 {Silicon, 2}
             },
-            new List<Anomaly>
-            {
+            anomalyList,
+            //new List<Anomaly>
+            //{
 
-            },
+            //},
             0.65,
 
             "Cool, i have a planet very similar to Earth!, though it is a little close to the homestar, but still livable.",
@@ -911,10 +1282,11 @@ namespace SpaceGame
                 {Uranium, 0},
                 {Silicon, 2}
             },
-            new List<Anomaly>
-            {
+            anomalyList,
+            //new List<Anomaly>
+            //{
 
-            },
+            //},
             0.50,
 
             "This planet is very similar to earth, however the planet is a little close to the homestar. Its not a perfect replica of earth but still livable though",
@@ -938,10 +1310,11 @@ namespace SpaceGame
                 {Uranium, 1},
                 {Silicon, 4}
             },
-            new List<Anomaly>
-            {
+            anomalyList,
+            //new List<Anomaly>
+            //{
 
-            },
+            //},
             0.75,
 
             "Wow, This planet is almost the same as earth, This would make a great place to live!",
@@ -972,30 +1345,6 @@ namespace SpaceGame
         public MainWindow()
         {
             InitializeComponent();
-
-            planetList.Add(RockyHell);
-            planetList.Add(WarmRockyPlanet);
-            planetList.Add(FrozenRockyPlanet);
-            planetList.Add(HellCarbonPlanet);
-            planetList.Add(WarmCarbonPlanet);
-            planetList.Add(FrozenCarbonPlanet);
-            planetList.Add(HellGasGiant);
-            planetList.Add(WarmGasGiant);
-            planetList.Add(FrozenGasGiant);
-            planetList.Add(HotParadise);
-            planetList.Add(WarmParadize);
-            planetList.Add(ColdParadise);
-            planetList.Add(EarthDuplicate);
-
-            Player.moduleList.Add(moduleInfraredScanner);
-            Player.moduleList.Add(moduleElectroMagneticReactiveArmor);
-            Player.moduleList.Add(moduleHighBetaFusionReactor);
-            Player.moduleList.Add(moduleBasicRepairSystem);
-            Player.moduleList.Add(moduleInfraredScanner);
-            Player.moduleList.Add(moduleInfraredScanner);
-            Player.moduleList.Add(moduleInfraredScanner);
-            Player.moduleList.Add(moduleInfraredScanner);
-            Player.moduleList.Add(moduleInfraredScanner);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e) 
@@ -1090,22 +1439,27 @@ namespace SpaceGame
                         if (planet.Habitability <= 30)
                         {
                             LabelHospitality.Foreground = Brushes.Red;
+                            break;
                         }
                         else if (planet.Habitability <= 40) 
                         {
                             LabelHospitality.Foreground = Brushes.Orange;
+                            break;
                         }
                         else if (planet.Habitability <= 50) 
                         {
                             LabelHospitality.Foreground = Brushes.Yellow;
+                            break;
                         }
                         else if (planet.Habitability <= 70) 
                         {
                             LabelHospitality.Foreground = Brushes.Green;
+                            break;
                         }
-                        else if (planet.Habitability <= 80) 
+                        else 
                         {
                             LabelHospitality.Foreground = Brushes.LightGreen;
+                            break;
                         }
                     }
                 }
@@ -1122,6 +1476,77 @@ namespace SpaceGame
         {
             CompondentsWindow WindowTechTree = new CompondentsWindow();
             WindowTechTree.Show();
+        }
+
+        private void buttonResearch_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                string selectedPlanetName = ComboBoxPlanet.SelectedItem.ToString();
+
+                foreach (Planet planet in Star.systemPlanets)
+                {
+                    if (selectedPlanetName == planet.name && planet.isResearched == false)
+                    {
+                        Anomaly selectedAnomaly = planet.exploreAnomaly();
+                        removePlanetByName(planet.name);
+                        
+                        TextBoxDescription.Text = selectedAnomaly.Description;
+
+                        Player.Science += planet.Science;
+                        Player.InflictDamage(selectedAnomaly.Damage);
+
+                        Player.ironQuantity += selectedAnomaly.ironQuantity;
+                        LabelIronQuantity.Content = Player.ironQuantity;
+
+                        Player.copperQuantity += selectedAnomaly.copperQuantity;
+                        LabelCopperQuantity.Content = Player.copperQuantity;
+
+                        Player.platinumQuantity += selectedAnomaly.platinumQuantity;
+                        LabelPlatinumQuantity.Content = Player.platinumQuantity;
+
+                        Player.uraniumQuantity += selectedAnomaly.uraniumQuantity;
+                        LabelUraniumQuantity.Content = Player.uraniumQuantity;
+
+                        Player.siliconQuantity += selectedAnomaly.siliconQuantity;
+                        LabelSiliconQuantity.Content = Player.siliconQuantity;
+
+                        LabelShield.Content = Player.currentShield;
+                        LabelHealth.Content = Player.currentHealth;
+
+                        planet.isResearched = true;
+                    }
+                }
+            }
+            catch (Exception) 
+            {
+                // do nothing.
+            }
+        }
+
+        public void removePlanetByName(string _planetName)
+        {
+            int index = findSystemPlanetIndexByName(_planetName);
+
+            Star.systemPlanets.RemoveAt(index);
+
+            if (index == -1) 
+            {
+                throw new Exception($"Passed planet wasnt found! {_planetName}");
+            }
+        }
+
+        public int findSystemPlanetIndexByName(string _planetName)
+        {
+            for (int iterator = 0; iterator < Star.systemPlanets.Count; iterator++) 
+            {
+                if (Star.systemPlanets[iterator].name == _planetName)
+                {
+                    return iterator;
+                }
+            }
+
+            return -1; // if this occurs then the planet doesnt exist.
         }
     }
 }

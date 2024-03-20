@@ -25,9 +25,21 @@ namespace SpaceGame
         }
 
         static SpaceCraft player = MainWindow.Player;
-        static 
 
-        Dictionary<Resource, int> playerResources = player.ShipResource;
+        static Resource Iron;
+        static Resource Copper;
+        static Resource Platinum;
+        static Resource Uranium;
+        static Resource Silicon;
+
+        static Dictionary<Resource, int> playerResources = new Dictionary<Resource, int>
+        {
+            {Iron, 0},
+            {Copper, 0},
+            {Platinum, 0},
+            {Uranium, 0},
+            {Silicon, 0}
+        };
         List<Module> playerModules = player.moduleList;
     }
 }

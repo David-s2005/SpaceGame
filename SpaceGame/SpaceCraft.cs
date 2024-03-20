@@ -9,16 +9,16 @@ namespace SpaceGame
     public class SpaceCraft
     {
         Random random = new Random();
-        
+
         private int CurrentHealth;
 
-        public int currentHealth 
+        public int currentHealth
         {
-            get 
+            get
             {
                 return CurrentHealth;
             }
-            set 
+            set
             {
                 CurrentHealth = value;
             }
@@ -26,13 +26,13 @@ namespace SpaceGame
 
         private int healthregen;
 
-        public int HealthRegen 
+        public int HealthRegen
         {
-            get 
-            { 
+            get
+            {
                 return healthregen;
             }
-            set 
+            set
             {
                 healthregen = value;
             }
@@ -40,13 +40,13 @@ namespace SpaceGame
 
         private int maxhealth;
 
-        public int MaxHealth 
+        public int MaxHealth
         {
-            get 
+            get
             {
                 return maxhealth;
             }
-            set 
+            set
             {
                 maxhealth = value;
             }
@@ -54,26 +54,26 @@ namespace SpaceGame
 
         private int CurrentShield;
 
-        public int currentShield 
+        public int currentShield
         {
-            get 
+            get
             {
                 return CurrentShield;
             }
-            set 
+            set
             {
                 CurrentShield = value;
             }
         }
         private int shieldregen;
 
-        public int ShieldRegen 
+        public int ShieldRegen
         {
-            get 
+            get
             {
                 return shieldregen;
             }
-            set 
+            set
             {
                 shieldregen = value;
             }
@@ -81,13 +81,13 @@ namespace SpaceGame
 
         private int maxshield;
 
-        public int MaxShield 
+        public int MaxShield
         {
-            get 
+            get
             {
                 return maxshield;
             }
-            set 
+            set
             {
                 maxshield = value;
             }
@@ -95,9 +95,9 @@ namespace SpaceGame
 
         private int science;
 
-        public int Science 
+        public int Science
         {
-            get 
+            get
             {
                 return science;
             }
@@ -107,19 +107,11 @@ namespace SpaceGame
             }
         }
 
-        internal Dictionary<Resource, int> ShipResource = new Dictionary<Resource, int>();
-
-        public Dictionary<Resource, int> shipResource
-        {
-            get
-            {
-                return ShipResource;
-            }
-            set
-            {
-                ShipResource = value;
-            }
-        }
+        public int ironQuantity;
+        public int copperQuantity;
+        public int platinumQuantity;
+        public int uraniumQuantity;
+        public int siliconQuantity;
 
         internal List<Module> moduleList = new List<Module>();
 
@@ -177,6 +169,15 @@ namespace SpaceGame
             }
         }
 
+        public List<Module> ScannerList = new List<Module>();
+        public List<Module> ReactorList = new List<Module>();
+        public List<Module> WeaponList = new List<Module>();
+        public List<Module> ShieldList = new List<Module>();
+        public List<Module> RepairSystemList = new List<Module>();
+        public List<Module> StructureList = new List<Module>();
+        public List<Module> AICoresList = new List<Module>();
+        public List<Module> CAPList = new List<Module>();
+
         public void InflictDamage(int _damage) 
         {
             if (CurrentShield <= _damage) // This occurs when the shield is knocked out.
@@ -190,11 +191,11 @@ namespace SpaceGame
                 {
                     aiSanity -= random.Next(5, 10);
                 }
-                else if (damageInflictedResult > 20) 
+                else if (damageInflictedResult > 20)
                 {
                     aiSanity -= random.Next(10, 15);                // Sanity will regenerate when the player flags habitable planets. The greater the habitability the greater the sanity.
                 }
-                else if (damageInflictedResult > 30) 
+                else if (damageInflictedResult > 30)
                 {
                     aiSanity -= random.Next(15, 22);
                 }
@@ -205,7 +206,7 @@ namespace SpaceGame
             }
         }
 
-        public void regenerateSanity(int _planetHabitability)  // 80 / 100 = 0.8 -> AISanity += regenAmount * 0.8 <- ROUND!!!!  <-----------------------
+        public void regenerateSanity(int _planetHabitability)  // e.g. 80 / 100 = 0.8 -> AISanity += regenAmount * 0.8 <- ROUND!!!!  <------------------
         {                                                      // This function will regenerate sanity according to the current planets habitability.  |
             int regenTotal = (int)Math.Round(((double)_planetHabitability / 100) * sanityRegenAmount); //----------------------------------------------|
 

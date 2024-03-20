@@ -119,7 +119,7 @@
         <Button x:Name="buttonExplore" Content="Explore" HorizontalAlignment="Left" Margin="1316,814,0,0" VerticalAlignment="Top" Height="64" Width="186" FontSize="36"/>
         <Button x:Name="buttonMine" Content="Mine" HorizontalAlignment="Left" Margin="1316,899,0,0" VerticalAlignment="Top" Height="64" Width="186" FontSize="36"/>
         <Button x:Name="buttonMark" Content="Mark" HorizontalAlignment="Left" Margin="1521,814,0,0" VerticalAlignment="Top" Height="64" Width="186" FontSize="36"/>
-        <Button x:Name="buttonResearch" Content="Research" HorizontalAlignment="Left" Margin="1521,899,0,0" VerticalAlignment="Top" Height="64" Width="186" FontSize="36"/>
+        <Button x:Name="buttonResearch" Content="Research" HorizontalAlignment="Left" Margin="1521,899,0,0" VerticalAlignment="Top" Height="64" Width="186" FontSize="36" Click="buttonResearch_Click"/>
         <Button x:Name="buttonTechTree" Content="Tech Tree" HorizontalAlignment="Left" Margin="1316,981,0,0" VerticalAlignment="Top" Height="64" Width="186" FontSize="36" Click="buttonTechTree_Click"/>
         <TextBlock x:Name="TextBoxDescription" HorizontalAlignment="Left" Margin="1327,532,0,0" TextWrapping="Wrap" Text=" " VerticalAlignment="Top" FontSize="24" Height="225" Width="544"/>
         <Label x:Name="LabelDescription" Content="Description:" HorizontalAlignment="Left" Margin="1322,495,0,0" VerticalAlignment="Top" FontSize="24" FontStyle="Italic"/>
